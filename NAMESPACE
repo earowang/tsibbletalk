@@ -2,5 +2,8 @@
 
 S3method(dice_date,POSIXt)
 S3method(dice_date,POSIXt.Date)
+S3method(dice_date,POSIXt.POSIXt)
 S3method(dice_date,POSIXt.default)
 export(dice_date)
+import(rlang)
+import(vctrs)

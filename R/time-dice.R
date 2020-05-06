@@ -19,12 +19,15 @@ dice_date.POSIXt.default <- function(x, by) {
 }
 
 #' @export
-dice_date.POSIXt.Date <- function(x, by) {
+dice_date.POSIXt.POSIXt <- function(x, by) {
   lt <- as.POSIXlt(x)
   by_lt <- as.POSIXlt(by)
-  hms::hms(lt$sec, lt$min, lt$hour, lt$yday - by_lt$yday)
-    # as.integer(difftime(lt, by_lt, units = "days")))
+  hms::hms(lt$sec, lt$min, lt$hour,
+    as.double(as_date(lt)) - as.double(as_date(by_lt)))
 }
+
+#' @export
+dice_date.POSIXt.Date <- dice_date.POSIXt.POSIXt
 
 dice_date.POSIXt.yearweek <- function(x, by) {
   # TODO: extend for weeks > 1
