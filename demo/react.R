@@ -9,7 +9,8 @@ dice_tsibble <- function(data, unit = NULL) {
     data,
     # Date = floor_date(Date, unit = paste(unit, "days")),
     Date = floor_date_anchor(Date_Time, unit = unit, as_date('2014-12-29')),
-    Time = as.numeric(dice_date(Date_Time, Date)) # linear scale
+    Time = as.numeric(dice_date(Date_Time, Date)), # linear scale
+    Date = as.factor(Date)
   )
 }
 
@@ -19,14 +20,31 @@ floor_date_anchor <- function(x, unit, anchor) {
 }
 
 sx <- pedestrian %>%
-  filter(Sensor == "Bourke Street Mall (North)") %>%
-  filter(Date <= as.Date('2015-02-21'))
+  filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%
+  filter(
+    as.Date('2015-02-17') <= Date,
+    Date <= as.Date('2015-04-21')
+  )
 
+p0 <- ggplotly({sx %>%
+    ggplot(aes(x = Time, y = Count, group = Date)) +
+    geom_line() +
+    facet_wrap(~ Sensor)})
 p <- ggplotly({sx %>%
     dice_tsibble(unit = 3) %>%
-    ggplot(aes(x = Time, y = Count, group = Date)) +
-    geom_line()})
-p
+    ggplot(aes(x = Time, y = Count, colour = Date)) +
+    geom_line() +
+    facet_wrap(~ Sensor) +
+    theme(legend.position = "none")})
+ # facet and colour alternate
+
+p$x$data[[1]]$x
+p$x$data[[2]]$x
+p$x$data[[3]]$x
+plotlyReactData(as_tibble(dice_tsibble(sx, unit = 3)), p0)[[3]]$x
+
+data <- as_tibble(dice_tsibble(sx, unit = 3))
+p0$x$data[[1]]$showlegend
 
 ui <- fluidPage(
   headerPanel(h1("Dynamic data in Plotly", align = "center")),
@@ -39,7 +57,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   p0 <- ggplotly({
     sx %>%
-    ggplot(aes(x = Time, y = Count, group = Date)) +
+    ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
     geom_line()})
   # p0 <- sx %>% group_by(Date) %>%
   #   plot_ly(x = ~ Time, y = ~ Count) %>%
@@ -57,6 +75,13 @@ shinyApp(ui, server)
 ped <- pedestrian %>%
   fill_gaps() %>%
   filter(Date <= as.Date('2015-03-01'))
+
+p1 <- ggplotly({
+  ped %>%
+    dice_tsibble(unit = 3) %>%
+    ggplot(aes(x = Time, y = Count, colour = Date)) +
+    geom_line() +
+    facet_wrap(~ Sensor, nrow = 2, scales = "free_y")})
 
 server <- function(input, output, session) {
   p0 <- ggplotly({

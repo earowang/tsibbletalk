@@ -17,9 +17,18 @@ facet_by <- function(data, plotly_data) {
   vec_split(as_tibble(data), key)$val
 }
 
+is_aes_mapping_present <- function(plotly) {
+  !is_null(plotly$x$data[[1]]$legendgroup)
+}
+
 plotlyReactData <- function(data, plotly) {
+  # TODO: split colour first and then facet
+  if (is_aes_mapping_present(plotly)) {
+    colour_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$colour)
+    data <- dplyr::arrange(data, !!sym(colour_chr))
+  }
   data_lst <- list(data)
-  if (is_faceted(plotly$x$layout)) {
+  if (is_aes_mapping_present(plotly) || is_faceted(plotly$x$layout)) {
     data_lst <- facet_by(data, plotly$x$data)
   }
   x_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$x)
@@ -28,7 +37,7 @@ plotlyReactData <- function(data, plotly) {
   if (!is_empty(grps)) {
     data_lst <- map(data_lst, function(x) plotly::group2NA(x, grps))
   }
-  # TODO: missing 'text' as tooptip and other aesthetics mapping
+  # TODO: missing 'text' as tooptip
   map2(
     data_lst,
     plotly$x$data,
@@ -48,32 +57,13 @@ plotlyReact <- function(outputId, data, plotly,
 }
 
 reset_x_range <- function(layout) {
+  # TODO: plot margin disappeared
+  # x as linear type but should be ticktext
   xaxis <- names(layout)[grepl("xaxis", names(layout))]
   for (i in xaxis) {
-    old <- layout[[i]]
-    layout[[i]] <- NULL
-    layout[[i]]$hoverformat <- old$hoverformat
-    layout[[i]]$title <- old$title
-    layout[[i]]$gridcolor <- old$gridcolor
-    layout[[i]]$anchor <- old$anchor
-    layout[[i]]$zeroline <- old$zeroline
-    layout[[i]]$gridwidth <- old$gridwidth
-    layout[[i]]$showgrid <- old$showgrid
-    layout[[i]]$domain <- old$domain
-    layout[[i]]$showline <- old$showline
-    layout[[i]]$linewidth <- old$linewidth
-    layout[[i]]$linecolor <- old$linecolor
-    layout[[i]]$tickangle <- old$tickangle
-    layout[[i]]$tickfont <- old$tickfont
-    layout[[i]]$showticklabels <- old$showticklabels
-    layout[[i]]$tickwidth <- old$tickwidth
-    layout[[i]]$ticklen <- old$ticklen
-    layout[[i]]$tickcolor <- old$tickcolor
-    layout[[i]]$ticks <- old$ticks
-    layout[[i]]$nticks <- old$nticks
-    layout[[i]]$tickmode <- old$tickmode
-    layout[[i]]$tickcolor <- old$tickcolor
-    layout[[i]]$categoryorder <- old$categoryorder
+    layout[[i]]$type <- layout[[i]]$range <- NULL
+    layout[[i]]$tickvals <- layout[[i]]$ticktext <- NULL
+    layout[[i]]$category <- NULL
     layout[[i]]$autorange <- TRUE
   }
   layout
