@@ -29,24 +29,14 @@ dice_date.POSIXt.POSIXt <- function(x, by) {
 #' @export
 dice_date.POSIXt.Date <- dice_date.POSIXt.POSIXt
 
-dice_date.POSIXt.yearweek <- function(x, by) {
-  # TODO: extend for weeks > 1
-  lt <- as.POSIXlt(x)
-  wday <- lt$wday
-  wday[wday == 0] <- 7L
-  lt_wk <- lubridate::isoweek(lt)
-  by_wk <- lubridate::isoweek(by)
-  hms::hms(lt$sec, lt$min, lt$hour,
-    (wday - 1) * (lt_wk - by_wk + 1))
-}
+#' @export
+dice_date.POSIXt.yearweek <- dice_date.POSIXt.POSIXt
 
-dice_date.POSIXt.yearmonth <- function(x, by) {
-  lt <- as.POSIXlt(x)
-  by_lt <- as.POSIXlt(by)
-  hms::hms(lt$sec, lt$min, lt$hour, lt$mday - by_lt$mday)
-}
+#' @export
+dice_date.POSIXt.yearmonth <- dice_date.POSIXt.POSIXt
 
-dice_date.POSIXt.yearquarter <- dice_date.POSIXt.Date
+#' @export
+dice_date.POSIXt.yearquarter <- dice_date.POSIXt.POSIXt
 
 dice_date.POSIXt.double <- function(x, by) {
   # TODO: extend for years > 1

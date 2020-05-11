@@ -1,4 +1,3 @@
-library(crosstalk)
 library(plotly)
 library(lubridate)
 library(tsibble)
@@ -9,7 +8,7 @@ dice_tsibble <- function(data, unit = NULL) {
     data,
     # Date = floor_date(Date, unit = paste(unit, "days")),
     Date = floor_date_anchor(Date_Time, unit = unit, as_date('2014-12-29')),
-    Time = as.numeric(dice_date(Date_Time, Date)), # linear scale
+    Time = as.numeric(dice_date(Date_Time, Date)) / 3600, # linear scale
     Date = as.factor(Date)
   )
 }
@@ -23,11 +22,11 @@ sx <- pedestrian %>%
   filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%
   filter(
     as.Date('2015-02-17') <= Date,
-    Date <= as.Date('2015-04-21')
+    Date <= as.Date('2015-02-21')
   )
 
 p0 <- ggplotly({sx %>%
-    ggplot(aes(x = Time, y = Count, group = Date)) +
+    ggplot(aes(x = Time, y = Count, colour = Date)) +
     geom_line() +
     facet_wrap(~ Sensor)})
 p <- ggplotly({sx %>%
@@ -43,6 +42,25 @@ p$x$data[[2]]$x
 p$x$data[[3]]$x
 plotlyReactData(as_tibble(dice_tsibble(sx, unit = 3)), p0)[[3]]$x
 
+plotly <- p0
+data <- as_tibble(dice_tsibble(sx, unit = 3))
+colour_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$colour)
+data_lst <- vec_split(data, data[[colour_chr]])$val
+nfacets <- vec_size(plotly$x$data) %% vec_size(data_lst)
+plotly$x$data[[1]]$x
+plotly$x$data[[2]]$x
+plotly$x$data[[3]]$x
+plotly$x$data[[1]]
+out <- list()
+for (i in seq_along(data_lst)) {
+  data_lst[[1]]
+  key <- vec_rep_each(
+    seq_len(nfacets),
+    # NA identifies the grouping info
+    map_int(plotly$x$data, function(z) sum(!is.na(z$x))))
+  vec_split(as_tibble(data), key)$val
+}
+
 data <- as_tibble(dice_tsibble(sx, unit = 3))
 p0$x$data[[1]]$showlegend
 
@@ -57,10 +75,11 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   p0 <- ggplotly({
     sx %>%
-    ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
-    geom_line()})
+    ggplot(aes(x = Time, y = Count, group = Date)) +
+    geom_line() +
+    facet_wrap(~ Sensor)}) %>% layout(xaxis = list(autorange = TRUE))
   # p0 <- sx %>% group_by(Date) %>%
-  #   plot_ly(x = ~ Time, y = ~ Count) %>%
+  #   plot_ly(x = ~ Time, y = ~ Count, color = ~ Sensor) %>%
   #   add_lines()
   output$plot <- renderPlotly(p0)
   observeEvent(input$unit, {
@@ -98,17 +117,36 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 
+sx <- pedestrian %>%
+  filter(Sensor %in% c("Southern Cross Station")) %>%
+  filter(Date <= as.Date('2015-06-30'))
+
 sx %>%
   mutate(
-    # Date = yearweek(Date),
-    Date = yearweek(floor_date(Date, '14 days')),
-    Time = dice_date(Date_Time, Date)
+    # Date = yearmonth(Date),
+    Date = yearmonth(floor_date(Date, '2 months')),
+    Time = dice_date(Date_Time, Date),
+    Date = as.factor(Date)
   ) %>%
-  ggplot(aes(x = Time, y = Count, group = Date)) +
+  ggplot(aes(x = Time, y = Count, colour = Date)) +
   geom_line() +
   NULL
   # scale_x_time(
   #   breaks = hms::hms(hour = seq(from = 12, by = 24, length.out = 7)),
   #   labels = c("M", "T", "W", "T", "F", "S", "S")
   # )
-p
+
+sx <- pedestrian %>%
+  filter(Sensor %in% c("Southern Cross Station")) %>%
+  filter(as.Date('2015-01-05') <=  Date, Date <= as.Date('2015-01-21'))
+
+sx %>%
+  mutate(
+    # Date = yearmonth(Date),
+    Date = yearweek(floor_date(yearweek(Date), '1 week')),
+    Time = dice_date.POSIXt.yearweek(Date_Time, Date),
+    Date = as.factor(as_date(Date))
+  ) %>%
+  ggplot(aes(x = Time, y = Count, colour = Date)) +
+  geom_line() +
+  NULL

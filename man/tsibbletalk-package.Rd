@@ -4,7 +4,7 @@
 \name{tsibbletalk-package}
 \alias{tsibbletalk}
 \alias{tsibbletalk-package}
-\title{tsibbletalk: What the Package Does (One Line, Title Case)}
+\title{tsibbletalk: Crosstalk Between Tsibble Objects}
 \description{
 What the package does (one paragraph).
 }

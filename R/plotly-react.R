@@ -18,7 +18,7 @@ facet_by <- function(data, plotly_data) {
 }
 
 is_aes_mapping_present <- function(plotly) {
-  !is_null(plotly$x$data[[1]]$legendgroup)
+  !is_null(plotly$x$attrs[[1]]$colour)
 }
 
 plotlyReactData <- function(data, plotly) {
@@ -57,14 +57,12 @@ plotlyReact <- function(outputId, data, plotly,
 }
 
 reset_x_range <- function(layout) {
-  # TODO: plot margin disappeared
-  # x as linear type but should be ticktext
+  # TODO: x as linear type but should be contextual ticktext
   xaxis <- names(layout)[grepl("xaxis", names(layout))]
   for (i in xaxis) {
-    layout[[i]]$type <- layout[[i]]$range <- NULL
     layout[[i]]$tickvals <- layout[[i]]$ticktext <- NULL
-    layout[[i]]$category <- NULL
-    layout[[i]]$autorange <- TRUE
+    layout[[i]]$autorange <- TRUE # ggplotly panel spacing gone
   }
   layout
 }
+
