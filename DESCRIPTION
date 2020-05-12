@@ -15,7 +15,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Imports: 
     rlang,
-    vctrs
+    vctrs,
+    R6
 Suggests: 
     plotly,
     shiny
