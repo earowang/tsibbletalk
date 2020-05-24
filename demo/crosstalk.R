@@ -1,7 +1,7 @@
 library(plotly)
 library(tsibble)
 library(feasts)
-library(crosstalk)
+library(dplyr)
 
 tour <- tourism %>%
   group_by(State, Region) %>%
@@ -10,9 +10,9 @@ tour <- tourism %>%
   as_shared_tsibble()
 
 tour_feat <- tour %>%
-  features.SharedTsibbleData(Trips, feat_stl)
+  features(Trips, feat_stl)
 
-g0 <- plotly_key_tree(tour)
+g0 <- plotly_key_tree(tour, height = 800)
 g1 <- ggplotly({tour %>%
     ggplot(aes(x = Quarter, y = Trips, group = Region)) +
     geom_line()})
@@ -22,7 +22,7 @@ g2 <- ggplotly({tour_feat %>%
 
 subplot(g1, g2, nrows = 2) %>%
   subplot(g0) %>%
-  print()
+  layout(width = 800)
   # highlight(persistent = TRUE, dynamic = TRUE)
 
 ped <- pedestrian %>%
