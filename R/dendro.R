@@ -1,4 +1,4 @@
-new_dendrogram <- function(x, vars) {
+new_dendrogram <- function(x, cols) {
   if (has_length(x, 0)) return(x)
 
   height <- length(x)
@@ -6,9 +6,9 @@ new_dendrogram <- function(x, vars) {
   midpoint <- (members - 1) / 2
 
   if (is.data.frame(x)) {
-    if (has_length(vars, 1)) {
+    if (has_length(cols, 1)) {
       lst <- map(
-        vec_split(x, x[vars])$val, function(x)
+        vec_split(x, x[cols])$val, function(x)
           structure(as.character(x), label = as.character(x), members = 1,
             height = 0, leaf = TRUE)
       )
@@ -17,8 +17,8 @@ new_dendrogram <- function(x, vars) {
       attr(lst, "height") <- height
       structure(lst, class = "dendrogram")
     } else{
-      use <- vars[1]
-      rest <- vars[-1]
+      use <- cols[1]
+      rest <- cols[-1]
       df_lst <- map(
         vec_split(x[names(x) != use], x[use])$val, function(x)
           structure(x, members = members, midpoint = midpoint, height = height)
@@ -29,7 +29,7 @@ new_dendrogram <- function(x, vars) {
       new_dendrogram(df_lst, rest)
     }
   } else if (is.list(x)) {
-    out <- map(x, new_dendrogram, vars)
+    out <- map(x, new_dendrogram, cols)
     attr(out, "members") <- attr(x, "members")
     attr(out, "midpoint") <- attr(x, "midpoint")
     attr(out, "height") <- attr(x, "height")
@@ -38,19 +38,19 @@ new_dendrogram <- function(x, vars) {
 }
 
 #' @importFrom plotly plot_ly add_segments add_markers add_text layout
-plot_dendro2 <- function(d, data, set, height = 600, width = 500, ...) {
-  labs <- vec_c(!!!map(unname(data), vec_unique))
-  vars <- names(data)
+plot_dendro2 <- function(d, data, cols, set, height = 600, width = 500, ...) {
+  labs <- vec_c(!!!map(unname(data[cols]), vec_unique))
   key_vals <- paste_data(data)
   root_lab <- list(key_vals)
-  nlist <- length(vars) - 1
+  nlist <- length(cols) - 1
   lab_lst <- vec_init(list(), n = nlist)
   for (i in seq_len(nlist)) {
-    indices <- dplyr::group_rows(dplyr::group_by(data, !!!sym(vars[i])))
+    indices <- dplyr::group_rows(dplyr::group_by(data, !!!sym(cols[i])))
     lab_lst[[i]] <- map(indices, function(x) key_vals[x])
   }
   lab_lst <- vec_c(!!!lab_lst) # flat one level
-  lab_lst <- vec_c(root_lab, lab_lst, list2(!!!key_vals))
+  lab_lst <- vec_c(root_lab, lab_lst, 
+    vec_split(key_vals, data[tail(cols, 1)])$val)
   all_xy <- dplyr::arrange(get_xy(d), -y) %>% 
     dplyr::mutate("label" := c("", labs), "key" := lab_lst)
 
@@ -91,12 +91,18 @@ get_xy <- function(node) {
   tibble::as_tibble(m)
 }
 
-plotly_key_tree <- function(data, height = 600, width = 500, ...) {
+plotly_key_tree <- function(data, cols, height = 600, width = 500, ...) {
   template <- data
   data <- data$origData()
   key <- key(data)
   data <- select(distinct(data, !!!key), !!!key)
-  dendro <- new_dendrogram(data, vars = names(data))
-  plot_dendro2(dendro, data = data, set = template$groupName(),
+  cols <- enquo(cols)
+  if (quo_is_missing(cols)) {
+    cols <- as.character(key)
+  } else {
+    cols <- names(data)[tidyselect::eval_select(cols, data = data)]
+  }
+  dendro <- new_dendrogram(distinct(data, !!!syms(cols)), cols)
+  plot_dendro2(dendro, data = data, cols = cols, set = template$groupName(), 
     height = height, width = width, ...)
 }
