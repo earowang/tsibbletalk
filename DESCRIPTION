@@ -18,6 +18,7 @@ Imports:
     rlang,
     vctrs,
     R6,
-    magrittr
+    magrittr,
+    dendextend
 Suggests: 
     shiny

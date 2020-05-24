@@ -1,10 +1,12 @@
 new_dendrogram <- function(x, vars) {
   if (has_length(x, 0)) return(x)
+
+  height <- length(x)
+  members <- vec_size(vec_unique(x[[height]]))
+  midpoint <- (members - 1) / 2
+
   if (is.data.frame(x)) {
     if (has_length(vars, 1)) {
-      height <- length(x)
-      members <- vec_size(vec_unique(x[[height]]))
-      midpoint <- (members - 1) / 2
       lst <- map(
         vec_split(x, x[vars])$val, function(x)
           structure(as.character(x), label = as.character(x), members = 1,
@@ -15,9 +17,6 @@ new_dendrogram <- function(x, vars) {
       attr(lst, "height") <- height
       structure(lst, class = "dendrogram")
     } else{
-      height <- length(x)
-      members <- vec_size(vec_unique(x[[height]]))
-      midpoint <- (members - 1) / 2
       use <- vars[1]
       rest <- vars[-1]
       df_lst <- map(
@@ -39,10 +38,21 @@ new_dendrogram <- function(x, vars) {
 }
 
 #' @importFrom plotly plot_ly add_segments add_markers add_text layout
-plot_dendro2 <- function(d, data, set = "A", height = 600, width = 500, ...) {
+plot_dendro2 <- function(d, data, set, height = 600, width = 500, ...) {
   labs <- vec_c(!!!map(unname(data), vec_unique))
+  vars <- names(data)
+  key_vals <- paste_data(data)
+  root_lab <- list(key_vals)
+  nlist <- length(vars) - 1
+  lab_lst <- vec_init(list(), n = nlist)
+  for (i in seq_len(nlist)) {
+    indices <- dplyr::group_rows(dplyr::group_by(data, !!!sym(vars[i])))
+    lab_lst[[i]] <- map(indices, function(x) key_vals[x])
+  }
+  lab_lst <- vec_c(!!!lab_lst) # flat one level
+  lab_lst <- vec_c(root_lab, lab_lst, list2(!!!key_vals))
   all_xy <- dplyr::arrange(get_xy(d), -y) %>% 
-    dplyr::mutate("label" := c("root", labs))
+    dplyr::mutate("label" := c("", labs), "key" := lab_lst)
 
   tidy_segments <- dendextend::as.ggdend(d)$segments
   all_txt <- dplyr::filter(all_xy, y == 0)
@@ -60,12 +70,12 @@ plot_dendro2 <- function(d, data, set = "A", height = 600, width = 500, ...) {
       data = tidy_segments, xend = ~-yend, yend = ~xend, showlegend = FALSE
     ) %>%
     add_markers(
-      data = dplyr::filter(all_xy, y > 0), key = ~label, set = set,
+      data = dplyr::filter(all_xy, y > 0), key = ~key, set = set,
       text = ~label, hoverinfo = "text",
       showlegend = FALSE
     ) %>%
     add_text(
-      data = all_txt, x = xaxis_rng[1], y = ~x, text = ~label, key = ~label,
+      data = all_txt, x = xaxis_rng[1], y = ~x, text = ~label, key = ~key,
       set = set, textposition = "middle right", showlegend = FALSE
     ) %>%
     layout(
@@ -81,8 +91,7 @@ get_xy <- function(node) {
   tibble::as_tibble(m)
 }
 
-plot_key_tree <- function(data, height = 600, width = 500, ...) {
-  # TODO: key needs to be linked
+plotly_key_tree <- function(data, height = 600, width = 500, ...) {
   template <- data
   data <- data$origData()
   key <- key(data)
