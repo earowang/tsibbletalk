@@ -1,6 +1,9 @@
 reconstruct_shared_tsibble <- function(data, template) {
   SharedTsibbleData$new(data,
-    key = parse_key_val(data, key_vars(template$origData())),
+    nesting = template$nesting(),
+    crossing = template$crossing(),
+    key = ~ parse_key_val(data, key = key_vars(template$origData()),
+      list_out = template$isKeyList()),
     group = template$groupName())
 }
 

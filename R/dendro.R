@@ -40,18 +40,18 @@ new_dendrogram <- function(x, cols) {
 #' @importFrom plotly plot_ly add_segments add_markers add_text layout
 plot_dendro2 <- function(d, data, cols, set, height = 600, width = 500, ...) {
   labs <- vec_c(!!!map(unname(data[cols]), vec_unique))
-  key_vals <- paste_data(data)
+  key_vals <- vec_c(!!!paste_data(data))
   root_lab <- list(key_vals)
   nlist <- length(cols) - 1
   lab_lst <- vec_init(list(), n = nlist)
   for (i in seq_len(nlist)) {
-    indices <- dplyr::group_rows(dplyr::group_by(data, !!!sym(cols[i])))
+    indices <- vec_group_loc(data[cols[i]])$loc
     lab_lst[[i]] <- map(indices, function(x) key_vals[x])
   }
   lab_lst <- vec_c(!!!lab_lst) # flat one level
-  lab_lst <- vec_c(root_lab, lab_lst, 
+  lab_lst <- vec_c(root_lab, lab_lst,
     vec_split(key_vals, data[tail(cols, 1)])$val)
-  all_xy <- dplyr::arrange(get_xy(d), -y) %>% 
+  all_xy <- dplyr::arrange(get_xy(d), -y) %>%
     dplyr::mutate("label" := c("", labs), "key" := lab_lst)
 
   tidy_segments <- dendextend::as.ggdend(d)$segments
@@ -70,8 +70,7 @@ plot_dendro2 <- function(d, data, cols, set, height = 600, width = 500, ...) {
       data = tidy_segments, xend = ~-yend, yend = ~xend, showlegend = FALSE
     ) %>%
     add_markers(
-      data = dplyr::filter(all_xy, y > 0), key = ~key, set = set,
-      text = ~label, hoverinfo = "text",
+      data = all_xy, key = ~key, set = set, text = ~label, hoverinfo = "text",
       showlegend = FALSE
     ) %>%
     add_text(
@@ -91,18 +90,13 @@ get_xy <- function(node) {
   tibble::as_tibble(m)
 }
 
-plotly_key_tree <- function(data, cols, height = 600, width = 500, ...) {
+plotly_key_tree <- function(data, height = 600, width = 500, ...) {
   template <- data
   data <- data$origData()
   key <- key(data)
   data <- select(distinct(data, !!!key), !!!key)
-  cols <- enquo(cols)
-  if (quo_is_missing(cols)) {
-    cols <- as.character(key)
-  } else {
-    cols <- names(data)[tidyselect::eval_select(cols, data = data)]
-  }
+  cols <- template$nesting()
   dendro <- new_dendrogram(distinct(data, !!!syms(cols)), cols)
-  plot_dendro2(dendro, data = data, cols = cols, set = template$groupName(), 
+  plot_dendro2(dendro, data = data, cols = cols, set = template$groupName(),
     height = height, width = width, ...)
 }

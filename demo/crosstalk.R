@@ -4,13 +4,12 @@ library(feasts)
 library(dplyr)
 
 tour <- tourism %>%
-  as_tsibble(key = c(State, Region, Purpose), index = Quarter) %>%
-  as_shared_tsibble()
+  as_shared_tsibble(spec = (State / Region) * Purpose)
 
 tour_feat <- tour %>%
   features(Trips, feat_stl)
 
-g0 <- plotly_key_tree(tour, cols = c(State, Region), height = 800)
+g0 <- plotly_key_tree(tour, height = 800)
 g1 <- tour %>%
   ggplot(aes(x = Quarter, y = Trips, group = Region)) +
   geom_line() +
@@ -21,8 +20,8 @@ g2 <- tour_feat %>%
 
 subplot(ggplotly(g1), ggplotly(g2), nrows = 2) %>%
   subplot(g0) %>%
-  layout(width = 800)
-  # highlight(persistent = TRUE, dynamic = TRUE)
+  layout(width = 800) %>%
+  highlight(dynamic = TRUE)
 
 tour <- tourism %>%
   group_by(State, Region) %>%
@@ -44,7 +43,7 @@ g2 <- tour_feat %>%
 subplot(ggplotly(g1), ggplotly(g2), nrows = 2) %>%
   subplot(g0) %>%
   layout(width = 800) %>%
-  highlight("plotly_selected")
+  highlight("plotly_selected", dynamic = TRUE)
 
 ped <- pedestrian %>%
   # filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%
@@ -105,10 +104,3 @@ dendro <- new_dendrogram(aa, c("continent", "iso3"))
 plot(dendro)
 plot(dendro, type = "triangle")
 plot_dendro2(dendro, data = aa, height = 670)
-
-library(plotly)
-dend <- USArrests %>%
-  dist() %>%
-  hclust() %>%
-  as.dendrogram() %>%
-  plot_dendro(set = "A", xmin = -100, height = 900, width = 1100)
