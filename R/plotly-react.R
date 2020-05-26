@@ -25,7 +25,7 @@ plotlyReactData <- function(data, plotly) {
   # TODO: split colour first and then facet
   if (is_aes_mapping_present(plotly)) {
     colour_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$colour)
-    data <- dplyr::arrange(data, !!sym(colour_chr))
+    data <- vec_slice(data, vec_order(data[[colour_chr]]))
   }
   data_lst <- list(data)
   if (is_aes_mapping_present(plotly) || is_faceted(plotly$x$layout)) {
@@ -33,7 +33,7 @@ plotlyReactData <- function(data, plotly) {
   }
   x_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$x)
   y_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$y)
-  grps <- dplyr::group_vars(plotly_data(plotly))
+  grps <- group_vars(plotly_data(plotly))
   if (!is_empty(grps)) {
     data_lst <- map(data_lst, function(x) plotly::group2NA(x, grps))
   }
@@ -66,3 +66,7 @@ reset_x_range <- function(layout) {
   layout
 }
 
+group_vars <- function(x) {
+  if (!inherits(x, "grouped_df")) return(character())
+  head(names(attr(x, "groups")), -1)
+}

@@ -1,6 +1,7 @@
 library(plotly)
 library(lubridate)
 library(tsibble)
+library(shiny)
 
 dice_tsibble <- function(data, unit = NULL) {
   stopifnot(is_tsibble(data))
@@ -61,8 +62,6 @@ for (i in seq_along(data_lst)) {
   vec_split(as_tibble(data), key)$val
 }
 
-data <- as_tibble(dice_tsibble(sx, unit = 3))
-p0$x$data[[1]]$showlegend
 
 ui <- fluidPage(
   headerPanel(h1("Dynamic data in Plotly", align = "center")),
@@ -75,7 +74,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   p0 <- ggplotly({
     sx %>%
-    ggplot(aes(x = Time, y = Count, group = Date)) +
+    ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
     geom_line() +
     facet_wrap(~ Sensor)}) %>% layout(xaxis = list(autorange = TRUE))
   # p0 <- sx %>% group_by(Date) %>%
