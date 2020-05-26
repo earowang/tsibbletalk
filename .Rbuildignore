@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^demo/$
+^Makefile$
+^docs$
+^_pkgdown\.yml$

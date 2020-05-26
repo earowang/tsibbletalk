@@ -38,7 +38,7 @@ new_dendrogram <- function(x, cols) {
 }
 
 #' @importFrom plotly plot_ly add_segments add_markers add_text layout
-plot_dendro2 <- function(d, data, cols, set, height = 600, width = 500, ...) {
+plot_dendro2 <- function(d, data, cols, set, height = NULL, width = NULL, ...) {
   labs <- vec_c(!!!map(unname(data[cols]), vec_unique))
   key_vals <- paste_data(data)
   root_lab <- list(key_vals)
@@ -92,7 +92,7 @@ get_xy <- function(node) {
   tibble::as_tibble(m)
 }
 
-plotly_key_tree <- function(data, height = 600, width = 500, ...) {
+plotly_key_tree <- function(data, height = NULL, width = NULL, ...) {
   template <- data
   data <- data$origData()
   key <- key_vars(data)

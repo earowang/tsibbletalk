@@ -9,7 +9,7 @@ tour <- tourism %>%
 tour_feat <- tour %>%
   features(Trips, feat_stl)
 
-g0 <- plotly_key_tree(tour, height = 800)
+g0 <- plotly_key_tree(tour)
 g1 <- tour %>%
   ggplot(aes(x = Quarter, y = Trips, group = Region)) +
   geom_line() +
@@ -32,7 +32,7 @@ tour <- tourism %>%
 tour_feat <- tour %>%
   features(Trips, feat_stl)
 
-g0 <- plotly_key_tree(tour, height = 800)
+g0 <- plotly_key_tree(tour)
 g1 <- tour %>%
   ggplot(aes(x = Quarter, y = Trips, group = Region)) +
   geom_line()
