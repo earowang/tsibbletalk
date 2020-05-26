@@ -40,7 +40,7 @@ new_dendrogram <- function(x, cols) {
 #' @importFrom plotly plot_ly add_segments add_markers add_text layout
 plot_dendro2 <- function(d, data, cols, set, height = 600, width = 500, ...) {
   labs <- vec_c(!!!map(unname(data[cols]), vec_unique))
-  key_vals <- vec_c(!!!paste_data(data))
+  key_vals <- paste_data(data)
   root_lab <- list(key_vals)
   nlist <- length(cols) - 1
   lab_lst <- vec_init(list(), n = nlist)
@@ -51,11 +51,13 @@ plot_dendro2 <- function(d, data, cols, set, height = 600, width = 500, ...) {
   lab_lst <- vec_c(!!!lab_lst) # flat one level
   lab_lst <- vec_c(root_lab, lab_lst,
     vec_split(key_vals, data[tail(cols, 1)])$val)
-  all_xy <- dplyr::arrange(get_xy(d), -y) %>%
-    dplyr::mutate("label" := c("", labs), "key" := lab_lst)
+  all_xy <- get_xy(d)
+  all_xy <- vec_slice(all_xy, vec_order(all_xy$y, "desc"))
+  all_xy$label <- c("", labs)
+  all_xy$key <- lab_lst
 
   tidy_segments <- dendextend::as.ggdend(d)$segments
-  all_txt <- dplyr::filter(all_xy, y == 0)
+  all_txt <- vec_slice(all_xy, all_xy$y == 0)
 
   axis <- list(
     title = "", showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE
@@ -93,10 +95,13 @@ get_xy <- function(node) {
 plotly_key_tree <- function(data, height = 600, width = 500, ...) {
   template <- data
   data <- data$origData()
-  key <- key(data)
-  data <- select(distinct(data, !!!key), !!!key)
+  key <- key_vars(data)
+  data <- vec_unique(data[key])[key]
   cols <- template$nesting()
-  dendro <- new_dendrogram(distinct(data, !!!syms(cols)), cols)
+  if (is_empty(cols)) {
+    abort("No nesting structure found. Please specify `spec` in `as_shared_tsibble()`.")
+  }
+  dendro <- new_dendrogram(vec_unique(data[cols]), cols)
   plot_dendro2(dendro, data = data, cols = cols, set = template$groupName(),
     height = height, width = width, ...)
 }

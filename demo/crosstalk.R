@@ -27,7 +27,7 @@ tour <- tourism %>%
   group_by(State, Region) %>%
   summarise(Trips = sum(Trips)) %>%
   ungroup() %>%
-  as_shared_tsibble()
+  as_shared_tsibble(spec = State/ Region)
 
 tour_feat <- tour %>%
   features(Trips, feat_stl)

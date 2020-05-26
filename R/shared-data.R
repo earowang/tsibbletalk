@@ -21,10 +21,6 @@ SharedTsibbleData <- R6::R6Class(
       private$.crossing <- crossing
     },
 
-    isKeyList = function() {
-      has_length(private$.nesting) && has_length(private$.crossing)
-    },
-
     nesting = function() {
       private$.nesting
     },
@@ -51,26 +47,26 @@ as_shared_tsibble <- function(x, spec) {
   nest_loc <- vec_c(nest_loc, tail(nest_loc, 1) + 1)
   vars <- rownames(tm)
   nest_vars <- vars[nest_loc]
-  cross_vars <- vars[-nest_loc]
-  is_key_list <- has_length(nest_vars) && has_length(cross_vars)
+  cross_vars <- if (has_length(nest_vars)) vars[-nest_loc] else vars
   x <- tsibble::as_tsibble(x, key = vars, validate = FALSE)
   # when both nesting and crossing present, use list() for key
   # otherwise character
   SharedTsibbleData$new(
     data = x, nesting = nest_vars, crossing = cross_vars,
-    key = ~ parse_key_val(x, list_out = is_key_list)
+    key = ~ parse_key_val(x, nest_vars, cross_vars)
   )
 }
 
-paste_data <- function(data, list_out = FALSE) {
-  out <- pmap(data, paste, sep = ":")
-  if (list_out) return(out)
-  vec_c(!!!out)
+paste_data <- function(data) {
+  vec_c(!!!pmap(data, paste, sep = ":"))
 }
 
-parse_key_val <- function(data, key = NULL, list_out = FALSE) {
-  if (is_null(key)) {
-    key <- tsibble::key_vars(data)
+parse_key_val <- function(data, nesting, crossing) {
+  if (has_length(nesting) && has_length(crossing)) {
+    nest_vals <- paste_data(data[nesting])
+    cross_vals <- paste_data(vec_group_loc(data[crossing])$key)
+    map(nest_vals, function(x) paste(x, cross_vals, sep = ":"))
+  } else {
+    paste_data(data[c(nesting, crossing)])
   }
-  paste_data(as.list(data)[key], list_out = list_out)
 }
