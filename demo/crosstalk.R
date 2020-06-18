@@ -2,25 +2,29 @@ library(plotly)
 library(tsibble)
 library(feasts)
 library(dplyr)
+library(crosstalk)
 
-tour <- tourism %>%
+tourism <- tourism %>%
   as_shared_tsibble(spec = (State / Region) * Purpose)
 
-tour_feat <- tour %>%
+tourism_feat <- tourism %>%
   features(Trips, feat_stl)
 
-g0 <- plotly_key_tree(tour)
-g1 <- tour %>%
-  ggplot(aes(x = Quarter, y = Trips, group = Region)) +
-  geom_line() +
+p0 <- plotly_key_tree(tourism, height = 800, width = 600)
+p1 <- tourism %>%
+  ggplot(aes(x = Quarter, y = Trips)) +
+  geom_line(aes(group = Region), alpha = 0.5) +
   facet_wrap(~ Purpose, scales = "free_y")
-g2 <- tour_feat %>%
+p2 <- tourism_feat %>%
   ggplot(aes(x = trend_strength, y = seasonal_strength_year)) +
-  geom_point()
+  geom_point(aes(group = Region))
 
-subplot(ggplotly(g1), ggplotly(g2), nrows = 2) %>%
-  subplot(g0) %>%
-  layout(width = 800) %>%
+subplot(p0,
+  subplot(
+    ggplotly(p1, tooltip = "Region", width = 800),
+    ggplotly(p2, tooltip = "Region", width = 800),
+    nrows = 2),
+  widths = c(.4, .6)) %>%
   highlight(dynamic = TRUE)
 
 tour <- tourism %>%
@@ -104,3 +108,6 @@ dendro <- new_dendrogram(aa, c("continent", "iso3"))
 plot(dendro)
 plot(dendro, type = "triangle")
 plot_dendro2(dendro, data = aa, height = 670)
+
+library(tsibble)
+vctrs::vec_rbind(pedestrian, new_data(pedestrian))

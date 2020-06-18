@@ -99,7 +99,9 @@ plotly_key_tree <- function(data, height = NULL, width = NULL, ...) {
   data <- vec_unique(data[key])[key]
   cols <- template$nesting()
   if (is_empty(cols)) {
-    abort("No nesting structure found. Please specify `spec` in `as_shared_tsibble()`.")
+    abort(c(
+      "No nesting structure found.",
+      i = "Please specify `spec` in `as_shared_tsibble()`."))
   }
   dendro <- new_dendrogram(vec_unique(data[cols]), cols)
   plot_dendro2(dendro, data = data, cols = cols, set = template$groupName(),
