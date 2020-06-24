@@ -12,6 +12,7 @@ License: GPL-3
 Imports: 
     crosstalk,
     dendextend,
+    glue,
     magrittr,
     plotly,
     R6,

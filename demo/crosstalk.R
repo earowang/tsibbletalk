@@ -47,7 +47,7 @@ g2 <- tour_feat %>%
 subplot(ggplotly(g1), ggplotly(g2), nrows = 2) %>%
   subplot(g0) %>%
   layout(width = 800) %>%
-  highlight("plotly_selected", dynamic = TRUE)
+  highlight(dynamic = TRUE)
 
 ped <- pedestrian %>%
   # filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%

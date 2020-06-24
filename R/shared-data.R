@@ -35,10 +35,12 @@ SharedTsibbleData <- R6::R6Class(
   )
 )
 
+#' @importFrom tsibble key_vars as_tsibble
 as_shared_tsibble <- function(x, spec) {
   spec <- enquo(spec)
+  keys <- key_vars(x)
   if (quo_is_missing(spec)) {
-    spec <- parse_expr(paste0(key_vars(x), collapse = "*"))
+    spec <- parse_expr(paste0(keys, collapse = "*"))
   }
   spec <- new_formula(lhs = NULL, rhs = spec, env = empty_env())
   tm <- attr(terms(spec), "factors")
@@ -48,8 +50,10 @@ as_shared_tsibble <- function(x, spec) {
   vars <- rownames(tm)
   nest_vars <- vars[nest_loc]
   cross_vars <- if (has_length(nest_vars)) vars[-nest_loc] else vars
-  x <- tsibble::as_tsibble(x, key = vars, validate = FALSE)
-  # when both nesting and crossing present, use list() for key
+  if (!identical(keys, vars)) {
+    x <- as_tsibble(x, key = vars, validate = FALSE)
+  }
+  # when both nesting and crossing vars are present, use list() for key
   # otherwise character
   SharedTsibbleData$new(
     data = x, nesting = nest_vars, crossing = cross_vars,
@@ -57,8 +61,16 @@ as_shared_tsibble <- function(x, spec) {
   )
 }
 
+#' @importFrom glue glue_data
 paste_data <- function(data) {
-  vec_c(!!!pmap(data, paste, sep = ":"))
+  msg <- curly_braces(names(data))
+  as.character(eval_tidy(quo(
+    glue_data(!!data, !!msg, .sep = ":", .envir = !!caller_env())
+  )))
+}
+
+curly_braces <- function(x) {
+  paste0("{", x, "}", collapse = ":")
 }
 
 parse_key_val <- function(data, nesting, crossing) {
