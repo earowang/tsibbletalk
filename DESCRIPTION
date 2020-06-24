@@ -1,5 +1,5 @@
 Package: tsibbletalk
-Title: Crosstalk Between Tsibble Objects
+Title: Crosstalk Between Tsibble-like Objects
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Earo",
@@ -9,17 +9,19 @@ Authors@R:
            comment = c(ORCID = "0000-0001-6448-5260"))
 Description: What the package does (one paragraph).
 License: GPL-3
+Imports: 
+    crosstalk,
+    dendextend,
+    magrittr,
+    plotly,
+    R6,
+    rlang,
+    shiny (>= 1.5.0),
+    tsibble (>= 0.9.1),
+    vctrs
+Suggests: 
+    fabletools
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
-Imports: 
-    plotly,
-    rlang,
-    vctrs,
-    R6,
-    magrittr,
-    dendextend
-Suggests: 
-    shiny,
-    fabletools
