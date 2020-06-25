@@ -66,7 +66,7 @@ melb_walk_weather_2018 <- walk_2018_hols %>%
 
 # Select set of varibales for modeling
 melb_walk_weather_prep_lm <- melb_walk_weather_2018 %>%
-  filter(Sensor == "Flinders Street Station Underpass") %>%
+  # filter(Sensor == "Flinders Street Station Underpass") %>%
   mutate_at(.vars = vars(
     Sensor,
     Time,
@@ -98,8 +98,8 @@ ggplot(peds_aug_lm,
 # Overall plot is pretty useless! But its because
 # there are multiple sensors and these are not in the model
 flinders_lm <- peds_aug_lm %>%
-  filter(Sensor == "Flinders Street Station Underpass") %>%
-  select(Date_Time, Date, Time, Count, .fitted, log_count) %>%
+  # filter(Sensor == "Flinders Street Station Underpass") %>%
+  select(Sensor, Date_Time, Date, Time, Count, .fitted, log_count) %>%
   pivot_longer(
     cols = c(log_count, .fitted),
     names_to = "model",
@@ -157,11 +157,12 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  p0 <- ggplotly({
+  p0 <-
     flinders_lm %>%
       ggplot(aes(x = Time, y = Count, group = Date, colour = model)) +
-      geom_line(alpha = 0.7)}) %>% layout(xaxis = list(autorange = TRUE))
-  output$plot <- renderPlotly(p0)
+      geom_line(alpha = 0.7) +
+      facet_wrap(~ Sensor)
+  output$plot <- renderPlotly(ggplotly(p0) %>% layout(xaxis = list(autorange = TRUE)))
   observeEvent(input$unit, {
     new <- dice_tsibble(flinders_lm, input$unit)
     plotlyReact("plot", new, p0)

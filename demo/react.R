@@ -2,6 +2,7 @@ library(plotly)
 library(lubridate)
 library(tsibble)
 library(shiny)
+library(dplyr)
 
 dice_tsibble <- function(data, unit = NULL) {
   stopifnot(is_tsibble(data))
@@ -24,44 +25,14 @@ sx <- pedestrian %>%
   filter(
     as.Date('2015-02-17') <= Date,
     Date <= as.Date('2015-02-21')
-  )
+  ) %>%
+  mutate()
 
 p0 <- ggplotly({sx %>%
     ggplot(aes(x = Time, y = Count, colour = Date)) +
     geom_line() +
     facet_wrap(~ Sensor)})
-p <- ggplotly({sx %>%
-    dice_tsibble(unit = 3) %>%
-    ggplot(aes(x = Time, y = Count, colour = Date)) +
-    geom_line() +
-    facet_wrap(~ Sensor) +
-    theme(legend.position = "none")})
- # facet and colour alternate
-
-p$x$data[[1]]$x
-p$x$data[[2]]$x
-p$x$data[[3]]$x
-plotlyReactData(as_tibble(dice_tsibble(sx, unit = 3)), p0)[[3]]$x
-
-plotly <- p0
-data <- as_tibble(dice_tsibble(sx, unit = 3))
-colour_chr <- clean_plotly_attrs(plotly$x$attrs[[1]]$colour)
-data_lst <- vec_split(data, data[[colour_chr]])$val
-nfacets <- vec_size(plotly$x$data) %% vec_size(data_lst)
-plotly$x$data[[1]]$x
-plotly$x$data[[2]]$x
-plotly$x$data[[3]]$x
-plotly$x$data[[1]]
-out <- list()
-for (i in seq_along(data_lst)) {
-  data_lst[[1]]
-  key <- vec_rep_each(
-    seq_len(nfacets),
-    # NA identifies the grouping info
-    map_int(plotly$x$data, function(z) sum(!is.na(z$x))))
-  vec_split(as_tibble(data), key)$val
-}
-
+library(ggplot2)
 
 ui <- fluidPage(
   headerPanel(h1("Dynamic data in Plotly", align = "center")),
@@ -72,8 +43,21 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  p0 <- ggplotly({
-    sx %>%
+  p0 <- sx %>%
+    ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
+    geom_line() +
+    facet_wrap(~ Sensor)
+  # p0 <- sx %>% group_by(Date) %>%
+  #   plot_ly(x = ~ Time, y = ~ Count, color = ~ Sensor) %>%
+  #   add_lines()
+  output$plot <- renderPlotly(ggplotly(p0) %>% layout(xaxis = list(autorange = TRUE)))
+  observeEvent(input$unit, {
+    new <- dice_tsibble(sx, input$unit)
+    plotlyReact("plot", new, p0)
+  })
+}
+server <- function(input, output, session) {
+  p0 <- ggplotly({sx %>%
     ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
     geom_line() +
     facet_wrap(~ Sensor)}) %>% layout(xaxis = list(autorange = TRUE))

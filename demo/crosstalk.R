@@ -4,14 +4,14 @@ library(feasts)
 library(dplyr)
 library(crosstalk)
 
-tourism <- tourism %>%
+tourism_shared <- tourism %>%
   as_shared_tsibble(spec = (State / Region) * Purpose)
 
-tourism_feat <- tourism %>%
+tourism_feat <- tourism_shared %>%
   features(Trips, feat_stl)
 
-p0 <- plotly_key_tree(tourism, height = 800, width = 600)
-p1 <- tourism %>%
+p0 <- plotly_key_tree(tourism_shared, height = 800, width = 600)
+p1 <- tourism_shared %>%
   ggplot(aes(x = Quarter, y = Trips)) +
   geom_line(aes(group = Region), alpha = 0.5) +
   facet_wrap(~ Purpose, scales = "free_y")
