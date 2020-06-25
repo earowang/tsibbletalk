@@ -12,3 +12,11 @@ features.SharedTsibbleData <- function(.tbl, .var, features, ...) {
   out <- fabletools::features(.tbl$origData(), {{ .var }}, features, ...)
   reconstruct_shared_tsibble(out, .tbl)
 }
+
+model.SharedTsibbleData <- function() {
+  
+}
+
+components.SharedTsibbleData <- function() {
+  
+}

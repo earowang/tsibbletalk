@@ -89,7 +89,7 @@ plot_dendro2 <- function(d, data, cols, set, height = NULL, width = NULL, ...) {
 get_xy <- function(node) {
   m <- dendextend::get_nodes_xy(node)
   colnames(m) <- c("x", "y")
-  tibble::as_tibble(m)
+  as_tibble(m)
 }
 
 plotly_key_tree <- function(data, height = NULL, width = NULL, ...) {

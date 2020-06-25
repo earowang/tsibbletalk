@@ -5,32 +5,32 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 
-
-period("1 month")$day
-period("1 month")$month
-
 sx <- pedestrian %>%
   filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%
   filter(
     Date <= as.Date('2015-02-21')
   )
 
-dice_tsibble(sx, "3 day")$.group[1:10]
-
 ui <- fluidPage(
-  headerPanel(h1("Dynamic data in Plotly", align = "center")),
-  br(),
-  div(sliderInput("unit", "Unit:", min = 1, max = 14, value = 1), align = "center"),
-  br(),
-  div(plotlyOutput("plot"))
+  tagList(
+    sliderInput(
+      "unit", "",
+      min = 1, max = 14, value = 14, pre = "day ",
+      animate = TRUE, width = "100%"
+    ),
+    plotlyOutput("plot")
+  )
 )
 
 server <- function(input, output, session) {
   p0 <- sx %>%
     ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
     geom_line() +
-    facet_wrap(~ Sensor)
-  output$plot <- renderPlotly(ggplotly(p0) %>% layout(xaxis = list(autorange = TRUE)))
+    facet_wrap(~ Sensor) +
+    theme(legend.position = "none")
+  output$plot <- renderPlotly(
+    ggplotly(p0) %>%
+      layout(xaxis = list(autorange = TRUE), xaxis2 = list(autorange = TRUE)))
   observeEvent(input$unit, {
     new <- dice_tsibble(sx,  paste0(input$unit, "day"))
     plotlyReact("plot", new, p0)

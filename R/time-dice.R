@@ -70,8 +70,8 @@ date_floor.POSIXt.Date <- function(x, to = new_date(), unit = 1) {
   anchor + floor(diff / unit) * unit
 }
 
-#' @importFrom dplyr mutate
-dice_tsibble <- function(data, period = NULL) {
+#' @importFrom dplyr mutate as_tibble
+dice_tsibble <- function(data, period) {
   stopifnot(is_tsibble(data))
   idx <- tsibble::index(data)
   period <- period(period)
