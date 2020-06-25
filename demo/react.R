@@ -22,15 +22,16 @@ ui <- fluidPage(
   )
 )
 
+# renderUI
+# https://mastering-shiny.org/action-dynamic.html#programming-ui
+
 server <- function(input, output, session) {
   p0 <- sx %>%
     ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
     geom_line() +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
-  output$plot <- renderPlotly(
-    ggplotly(p0) %>%
-      layout(xaxis = list(autorange = TRUE), xaxis2 = list(autorange = TRUE)))
+  output$plot <- renderPlotly(ggplotly(p0))
   observeEvent(input$unit, {
     new <- dice_tsibble(sx,  paste0(input$unit, "day"))
     plotlyReact("plot", new, p0)
