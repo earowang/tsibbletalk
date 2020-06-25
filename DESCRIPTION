@@ -19,10 +19,11 @@ Imports:
     rlang,
     shiny (>= 1.5.0),
     tsibble (>= 0.9.1),
-    vctrs
+    vctrs,
+    lubridate
 Suggests: 
     fabletools
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.0.9000

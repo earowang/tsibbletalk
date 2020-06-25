@@ -70,10 +70,8 @@ plotlyReactData.gg <- function(p, data) {
 finalise_data <- function(p, data) {
   x_chr <- clean_plotly_attrs(p$x$attrs[[1]]$x)
   y_chr <- clean_plotly_attrs(p$x$attrs[[1]]$y)
-  grps <- group_vars(plotly_data(p))
-  if (!is_empty(grps)) {
-    data_lst <- map(data, function(x) plotly::group2NA(x, grps))
-  }
+  grps <- group_vars(group_by(plotly_data(p), ".GROUP" := 1L))
+  data_lst <- map(data, function(x) plotly::group2NA(x, grps))
   # TODO: missing 'text' as tooptip
   map2(
     data_lst,
@@ -86,8 +84,13 @@ plotlyReact <- function(outputId, data, plotly,
                         session = shiny::getDefaultReactiveDomain()) {
   new_data <- plotlyReactData(plotly, data)
   if (is_ggplot(plotly)) {
+    plotly$data <- mutate(plotly$data, ".GROUP" := 1L)
+    plotly$mapping$group <- as_quosure(expr(.GROUP),
+      env = get_env(plotly$mapping$x))
     plotly <- plotly::layout(plotly::ggplotly(plotly),
       xaxis = list(autorange = TRUE))
+  } else {
+    plotly <- plotly::plotly_build(plotly)
   }
   plotly::plotlyProxyInvoke(
     plotly::plotlyProxy(outputId, session),

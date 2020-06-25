@@ -3,36 +3,19 @@ library(lubridate)
 library(tsibble)
 library(shiny)
 library(dplyr)
+library(ggplot2)
 
-dice_tsibble <- function(data, unit = NULL) {
-  stopifnot(is_tsibble(data))
-  mutate(
-    data,
-    # Date = floor_date(Date, unit = paste(unit, "days")),
-    Date = floor_date_anchor(Date_Time, unit = unit, as_date('2014-12-29')),
-    Time = as.numeric(dice_date(Date_Time, Date)) / 3600, # linear scale
-    Date = as.factor(Date)
-  )
-}
 
-floor_date_anchor <- function(x, unit, anchor) {
-  diff <- as.double(as_date(x)) - as.double(as_date(anchor))
-  anchor + days(floor(diff / unit) * unit)
-}
+period("1 month")$day
+period("1 month")$month
 
 sx <- pedestrian %>%
   filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%
   filter(
-    as.Date('2015-02-17') <= Date,
     Date <= as.Date('2015-02-21')
-  ) %>%
-  mutate()
+  )
 
-p0 <- ggplotly({sx %>%
-    ggplot(aes(x = Time, y = Count, colour = Date)) +
-    geom_line() +
-    facet_wrap(~ Sensor)})
-library(ggplot2)
+dice_tsibble(sx, "3 day")$.group[1:10]
 
 ui <- fluidPage(
   headerPanel(h1("Dynamic data in Plotly", align = "center")),
@@ -44,24 +27,25 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   p0 <- sx %>%
-    ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
+    ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
     geom_line() +
     facet_wrap(~ Sensor)
   output$plot <- renderPlotly(ggplotly(p0) %>% layout(xaxis = list(autorange = TRUE)))
   observeEvent(input$unit, {
-    new <- dice_tsibble(sx, input$unit)
+    new <- dice_tsibble(sx,  paste0(input$unit, "day"))
     plotlyReact("plot", new, p0)
   })
 }
 shinyApp(ui, server)
 
 server <- function(input, output, session) {
-  p0 <- sx %>% group_by(Date) %>%
-    plot_ly(x = ~ Time, y = ~ Count, color = ~ Sensor) %>%
+  p0 <- sx %>%
+    filter(Sensor %in% c("Southern Cross Station")) %>%
+    plot_ly(x = ~ Date_Time, y = ~ Count, color = ~ Sensor) %>%
     add_lines()
   output$plot <- renderPlotly(p0)
   observeEvent(input$unit, {
-    new <- dice_tsibble(sx, input$unit)
+    new <- dice_tsibble(sx %>% filter(Sensor %in% c("Southern Cross Station")), paste0(input$unit, "day"))
     plotlyReact("plot", new, p0)
   })
 }
