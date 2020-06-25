@@ -47,23 +47,18 @@ server <- function(input, output, session) {
     ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
     geom_line() +
     facet_wrap(~ Sensor)
-  # p0 <- sx %>% group_by(Date) %>%
-  #   plot_ly(x = ~ Time, y = ~ Count, color = ~ Sensor) %>%
-  #   add_lines()
   output$plot <- renderPlotly(ggplotly(p0) %>% layout(xaxis = list(autorange = TRUE)))
   observeEvent(input$unit, {
     new <- dice_tsibble(sx, input$unit)
     plotlyReact("plot", new, p0)
   })
 }
+shinyApp(ui, server)
+
 server <- function(input, output, session) {
-  p0 <- ggplotly({sx %>%
-    ggplot(aes(x = Time, y = Count, group = Date, colour = Sensor)) +
-    geom_line() +
-    facet_wrap(~ Sensor)}) %>% layout(xaxis = list(autorange = TRUE))
-  # p0 <- sx %>% group_by(Date) %>%
-  #   plot_ly(x = ~ Time, y = ~ Count, color = ~ Sensor) %>%
-  #   add_lines()
+  p0 <- sx %>% group_by(Date) %>%
+    plot_ly(x = ~ Time, y = ~ Count, color = ~ Sensor) %>%
+    add_lines()
   output$plot <- renderPlotly(p0)
   observeEvent(input$unit, {
     new <- dice_tsibble(sx, input$unit)
