@@ -24,7 +24,7 @@ tsibbleDiceServer <- function(id, plot, period) {
         ns <- session$ns
         sliderInput(
           ns("unit"), "",
-          min = 1, max = period$max, value = period$max, step = 1,
+          min = 0, max = period$max, value = period$max, step = period$unit,
           pre = period$label, animate = TRUE, width = "100%"
         )
       })
@@ -47,7 +47,7 @@ parse_period <- function(x, period) {
     scale <- 3600
     label <- "day "
   }  
-  max <- vec_size(vec_unique(date_floor(x, to = to, unit = unit))) + 1
+  max <- vec_size(vec_unique(date_floor(x, to = to, unit = 1))) + 1
   list(to = to, unit = unit, scale = scale, max = max, label = label)
 }
 
