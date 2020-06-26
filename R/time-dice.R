@@ -59,7 +59,7 @@ date_floor.POSIXt <- function(x, to = new_date(), unit = 1) {
   UseMethod("date_floor.POSIXt", to)
 }
 
-#' @importFrom lubridate as_date wday period
+#' @importFrom lubridate as_date wday
 #' @export
 date_floor.POSIXt.Date <- function(x, to = new_date(), unit = 1) {
   x <- as_date(x)
@@ -68,21 +68,4 @@ date_floor.POSIXt.Date <- function(x, to = new_date(), unit = 1) {
   anchor <- min_x - wday_x + 1 # anchor to Monday
   diff <- as.double(x) - as.double(anchor)
   anchor + floor(diff / unit) * unit
-}
-
-#' @importFrom dplyr mutate as_tibble
-dice_tsibble <- function(data, period) {
-  stopifnot(is_tsibble(data))
-  idx <- tsibble::index(data)
-  period <- period(period)
-  if (period$day != 0) {
-    to <- new_date()
-    unit <- period$day
-    scale <- 3600
-  }
-  mutate(as_tibble(data),
-    ".GROUP" := date_floor(!!idx, to = new_date(), unit = unit),
-    !!idx := date_dice(!!idx, .GROUP) / scale,
-    ".GROUP" := as.factor(.GROUP)
-  )
 }

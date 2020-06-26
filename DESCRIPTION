@@ -13,14 +13,14 @@ Imports:
     crosstalk,
     dendextend,
     glue,
+    lubridate,
     magrittr,
     plotly,
     R6,
     rlang,
     shiny (>= 1.5.0),
     tsibble (>= 0.9.1),
-    vctrs,
-    lubridate
+    vctrs
 Suggests: 
     fabletools
 Encoding: UTF-8

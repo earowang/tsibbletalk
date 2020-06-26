@@ -1,0 +1,59 @@
+#' @importFrom shiny NS tagList uiOutput moduleServer observeEvent renderUI
+#' @importFrom plotly plotlyOutput ggplotly renderPlotly
+tsibbleDiceUI <- function(id) {
+  ns <- NS(id)
+  tagList(
+    uiOutput(ns("period")),
+    plotlyOutput(ns("plot"))
+  )
+}
+
+tsibbleDiceServer <- function(id, data, period, plot) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+      idx <- data[[tsibble::index_var(data)]]
+      period <- parse_period(idx, period)
+      output$period <- renderUI({
+        ns <- session$ns
+        sliderInput(
+          ns("unit"), "",
+          min = 1, max = period$max, value = period$max, step = 1,
+          pre = period$label, animate = TRUE, width = "100%"
+        )
+      })
+      if (is_ggplot(plot)) {
+        plot <- ggplotly(plot)
+      }
+      output$plot <- renderPlotly(plot)
+      observeEvent(input$unit, {
+        if (input$unit == period$max) return()
+        new_data <- dice_tsibble(data, period$to, input$unit, period$scale)
+        plotlyReact("plot", new_data, plot)
+      })
+    }
+  )
+}
+
+#' @importFrom lubridate period
+parse_period <- function(x, period) {
+  period <- period(period)
+  if (period$day != 0) {
+    to <- new_date()
+    unit <- period$day
+    scale <- 3600
+    label <- "day "
+  }  
+  max <- vec_size(vec_unique(date_floor(x, to = to, unit = unit)))
+  list(to = to, unit = unit, scale = scale, max = max, label = label)
+}
+
+#' @importFrom dplyr mutate as_tibble
+dice_tsibble <- function(data, to, unit, scale) {
+  idx <- tsibble::index(data)
+  mutate(as_tibble(data),
+    ".GROUP" := date_floor(!!idx, to = to, unit = unit),
+    !!idx := date_dice(!!idx, .GROUP) / scale,
+    ".GROUP" := as.factor(.GROUP)
+  )
+}

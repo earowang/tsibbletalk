@@ -12,18 +12,8 @@ sx <- pedestrian %>%
   )
 
 ui <- fluidPage(
-  tagList(
-    sliderInput(
-      "unit", "",
-      min = 1, max = 14, value = 14, pre = "day ",
-      animate = TRUE, width = "100%"
-    ),
-    plotlyOutput("plot")
-  )
+  tsibbleDiceUI("dice")
 )
-
-# renderUI
-# https://mastering-shiny.org/action-dynamic.html#programming-ui
 
 server <- function(input, output, session) {
   p0 <- sx %>%
@@ -31,51 +21,18 @@ server <- function(input, output, session) {
     geom_line() +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
-  output$plot <- renderPlotly(ggplotly(p0))
-  observeEvent(input$unit, {
-    new <- dice_tsibble(sx,  paste0(input$unit, "day"))
-    plotlyReact("plot", new, p0)
-  })
+  tsibbleDiceServer("dice", sx, period = "1 day", p0)
 }
 shinyApp(ui, server)
 
+sx2 <- sx %>%
+  filter(Sensor %in% c("Southern Cross Station"))
+
 server <- function(input, output, session) {
-  p0 <- sx %>%
-    filter(Sensor %in% c("Southern Cross Station")) %>%
+  p0 <- sx2 %>%
     plot_ly(x = ~ Date_Time, y = ~ Count, color = ~ Sensor) %>%
     add_lines()
-  output$plot <- renderPlotly(p0)
-  observeEvent(input$unit, {
-    new <- dice_tsibble(sx %>% filter(Sensor %in% c("Southern Cross Station")), paste0(input$unit, "day"))
-    plotlyReact("plot", new, p0)
-  })
-}
-
-shinyApp(ui, server)
-
-# Testing facet
-ped <- pedestrian %>%
-  fill_gaps() %>%
-  filter(Date <= as.Date('2015-03-01'))
-
-p1 <- ggplotly({
-  ped %>%
-    dice_tsibble(unit = 3) %>%
-    ggplot(aes(x = Time, y = Count, colour = Date)) +
-    geom_line() +
-    facet_wrap(~ Sensor, nrow = 2, scales = "free_y")})
-
-server <- function(input, output, session) {
-  p0 <- ggplotly({
-    ped %>%
-      ggplot(aes(x = Time, y = Count, group = Date)) +
-      geom_line() +
-      facet_wrap(~ Sensor, nrow = 2, scales = "free_y")})
-  output$plot <- renderPlotly(p0)
-  observeEvent(input$unit, {
-    new <- dice_tsibble(ped, input$unit)
-    plotlyReact("plot", new, p0)
-  })
+  tsibbleDiceServer("a", sx2, "1 day", p0)
 }
 
 shinyApp(ui, server)

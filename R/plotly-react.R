@@ -67,6 +67,7 @@ plotlyReactData.gg <- function(p, data) {
   vec_c(!!!out)
 }
 
+#' @importFrom plotly plotly_data
 finalise_data <- function(p, data) {
   x_chr <- clean_plotly_attrs(p$x$attrs[[1]]$x)
   y_chr <- clean_plotly_attrs(p$x$attrs[[1]]$y)
