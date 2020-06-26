@@ -1,5 +1,19 @@
+#' A shiny module to easily slice and dice tsibble index for visualising periodicity
+#'
+#' A pair of UI and server functions: `tsibbleDiceUI()` and `tsibbleDiceServer()`.
+#'
+#' @param id A unique shiny id.
+#' @param plot A `ggplot` or `plotly` object.
+#' @param period A string passed to [lubridate::period()] to specify the minimul
+#' seasonal period, for example `"1 day"`.
+#' @name tsibble-dice
+NULL
+
 #' @importFrom shiny NS tagList uiOutput moduleServer observeEvent renderUI
+#' @importFrom shiny sliderInput
 #' @importFrom plotly plotlyOutput ggplotly renderPlotly
+#' @rdname tsibble-dice
+#' @export
 tsibbleDiceUI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -8,6 +22,8 @@ tsibbleDiceUI <- function(id) {
   )
 }
 
+#' @rdname tsibble-dice
+#' @export
 tsibbleDiceServer <- function(id, plot, period) {
   moduleServer(
     id,

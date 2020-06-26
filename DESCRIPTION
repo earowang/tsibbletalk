@@ -10,19 +10,19 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: GPL-3
 Imports: 
-    crosstalk,
-    dendextend,
-    glue,
-    lubridate,
-    magrittr,
-    plotly,
-    R6,
-    rlang,
+    crosstalk (>= 1.1.0.1),
+    dendextend (>= 1.13.4),
+    dplyr (>= 1.0.0),
+    glue (>= 1.4.1),
+    lubridate (>= 1.7.9),
+    plotly (>= 4.9.2.1),
+    R6 (>= 2.4.1),
+    rlang (>= 0.4.6),
     shiny (>= 1.5.0),
     tsibble (>= 0.9.1),
-    vctrs
+    vctrs (>= 0.3.1)
 Suggests: 
-    fabletools
+    fabletools (>= 0.2.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

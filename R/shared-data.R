@@ -35,7 +35,20 @@ SharedTsibbleData <- R6::R6Class(
   )
 )
 
+#' Coerce to a shared tsibble from tsibble
+#'
+#' @param x A tsibble.
+#' @param spec A formula to specify tsibble key structures. By default, crossing
+#' structures (i.e `key1 * key2`) are assumed for the key. The required
+#' specification for nesting is `parent / child`.
+#'
+#' @examples
+#' library(tsibble)
+#' as_shared_tsibble(tourism, spec = (State / Region) * Purpose)
 #' @importFrom tsibble key_vars as_tsibble
+#' @importFrom stats terms
+#' @importFrom utils head tail
+#' @export
 as_shared_tsibble <- function(x, spec) {
   spec <- enquo(spec)
   keys <- key_vars(x)

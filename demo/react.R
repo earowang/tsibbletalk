@@ -6,10 +6,10 @@ library(dplyr)
 library(ggplot2)
 
 sx <- pedestrian %>%
-  filter(Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station")) %>%
   filter(
-    Date <= as.Date('2015-02-21')
-  )
+    Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station"),
+    Date <= as.Date('2015-04-21')
+  ) %>% as_shared_tsibble()
 
 ui <- fluidPage(
   tsibbleDiceUI("dice")

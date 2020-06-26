@@ -38,6 +38,7 @@ new_dendrogram <- function(x, cols) {
 }
 
 #' @importFrom plotly plot_ly add_segments add_markers add_text layout
+#' @importFrom grDevices extendrange
 plot_dendro2 <- function(d, data, cols, set, height = NULL, width = NULL, ...) {
   labs <- vec_c(!!!map(unname(data[cols]), vec_unique))
   key_vals <- paste_data(data)
@@ -92,9 +93,15 @@ get_xy <- function(node) {
   as_tibble(m)
 }
 
+#' Plot nesting structures in shared tsibbles using plotly
+#'
+#' @param data A shared tsibble.
+#' @inheritParams plotly::plot_dendro
+#'
+#' @export
 plotly_key_tree <- function(data, height = NULL, width = NULL, ...) {
   template <- data
-  data <- data$origData()
+  data <- as_tsibble(data)
   key <- key_vars(data)
   data <- vec_unique(data[key])[key]
   cols <- template$nesting()

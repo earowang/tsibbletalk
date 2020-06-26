@@ -1,3 +1,5 @@
+globalVariables(".GROUP")
+
 clean_plotly_attrs <- function(x) {
   stopifnot(is_formula(x))
   nm <- f_name(x)
@@ -68,6 +70,7 @@ plotlyReactData.gg <- function(p, data) {
 }
 
 #' @importFrom plotly plotly_data
+#' @importFrom dplyr group_by
 finalise_data <- function(p, data) {
   x_chr <- clean_plotly_attrs(p$x$attrs[[1]]$x)
   y_chr <- clean_plotly_attrs(p$x$attrs[[1]]$y)

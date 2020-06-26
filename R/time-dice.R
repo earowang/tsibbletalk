@@ -40,7 +40,6 @@ date_floor.POSIXt <- function(x, to = new_date(), unit = 1) {
 }
 
 #' @importFrom lubridate as_date wday
-#' @export
 date_floor.POSIXt.Date <- function(x, to = new_date(), unit = 1) {
   x <- as_date(x)
   min_x <- min(x)

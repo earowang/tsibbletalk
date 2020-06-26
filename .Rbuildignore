@@ -1,7 +1,8 @@
 ^tsibbletalk\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^demo/$
+^demo$
+^data-raw$
 ^Makefile$
 ^docs$
 ^_pkgdown\.yml$
