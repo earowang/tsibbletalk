@@ -8,10 +8,16 @@ tsibbleDiceUI <- function(id) {
   )
 }
 
-tsibbleDiceServer <- function(id, data, period, plot) {
+tsibbleDiceServer <- function(id, plot, period) {
   moduleServer(
     id,
     function(input, output, session) {
+      if (is_ggplot(plot)) {
+        data <- plot$data
+        plot <- ggplotly(plot)
+      } else {
+        data <- plotly_data(plot)
+      }
       idx <- data[[tsibble::index_var(data)]]
       period <- parse_period(idx, period)
       output$period <- renderUI({
@@ -22,9 +28,6 @@ tsibbleDiceServer <- function(id, data, period, plot) {
           pre = period$label, animate = TRUE, width = "100%"
         )
       })
-      if (is_ggplot(plot)) {
-        plot <- ggplotly(plot)
-      }
       output$plot <- renderPlotly(plot)
       observeEvent(input$unit, {
         if (input$unit == period$max) return()
@@ -44,7 +47,7 @@ parse_period <- function(x, period) {
     scale <- 3600
     label <- "day "
   }  
-  max <- vec_size(vec_unique(date_floor(x, to = to, unit = unit)))
+  max <- vec_size(vec_unique(date_floor(x, to = to, unit = unit))) + 1
   list(to = to, unit = unit, scale = scale, max = max, label = label)
 }
 

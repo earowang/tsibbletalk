@@ -21,7 +21,7 @@ server <- function(input, output, session) {
     geom_line() +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
-  tsibbleDiceServer("dice", sx, period = "1 day", p0)
+  tsibbleDiceServer("dice", p0, period = "1 day")
 }
 shinyApp(ui, server)
 
