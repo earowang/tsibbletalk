@@ -7,6 +7,24 @@
 #' @param period A string passed to [lubridate::period()] to specify the minimul
 #' seasonal period, for example `"1 day"`.
 #' @name tsibble-dice
+#' @examples
+#' if (interactive()) {
+#'   library(tsibble)
+#'   library(shiny)
+#'   library(ggplot2)
+#' 
+#'   ui <- fluidPage(tsibbleDiceUI("dice"))
+#' 
+#'   server <- function(input, output, session) {
+#'     p <- fill_gaps(pedestrian) %>%
+#'       ggplot(aes(x = Date_Time, y = Count), alpha = .6) +
+#'       geom_line() +
+#'       facet_wrap(~ Sensor, scales = "free_y") +
+#'       theme(legend.position = "none")
+#'     tsibbleDiceServer("dice", p, period = "1 day")
+#'   }
+#'   shinyApp(ui, server)
+#' }
 NULL
 
 #' @importFrom shiny NS tagList uiOutput moduleServer observeEvent renderUI

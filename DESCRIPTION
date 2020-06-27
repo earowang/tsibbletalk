@@ -2,12 +2,18 @@ Package: tsibbletalk
 Title: Crosstalk Between Tsibble-like Objects
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Earo",
-           family = "Wang",
-           role = c("aut", "cre"),
-           email = "earo.wang@gmail.com",
-           comment = c(ORCID = "0000-0001-6448-5260"))
-Description: What the package does (one paragraph).
+    c(person(given = "Earo",
+             family = "Wang",
+             role = c("aut", "cre"),
+             email = "earo.wang@gmail.com",
+             comment = c(ORCID = "0000-0001-6448-5260")),
+      person(given = "Di",
+             family = "Cook",
+             role = c("aut"),
+             comment = c(ORCID = "0000-0002-3813-7155")))
+Description: A shared tsibble data easily communicates between htmlwidgets on
+    the client side, powered by 'crosstalk'. A shiny module is provided to
+    visually explore periodic/sporadic temporal pattern.
 License: GPL-3
 Imports: 
     crosstalk (>= 1.1.0.1),
@@ -22,7 +28,8 @@ Imports:
     tsibble (>= 0.9.1),
     vctrs (>= 0.3.1)
 Suggests: 
-    fabletools (>= 0.2.0)
+    fabletools (>= 0.2.0),
+    ggplot2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
