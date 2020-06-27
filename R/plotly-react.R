@@ -84,7 +84,7 @@ finalise_data <- function(p, data) {
   )
 }
 
-plotlyReact <- function(outputId, data, plotly,
+plotlyReact <- function(outputId, data, plotly, clear = FALSE,
                         session = shiny::getDefaultReactiveDomain()) {
   new_data <- plotlyReactData(plotly, data)
   if (is_ggplot(plotly)) {
@@ -100,16 +100,21 @@ plotlyReact <- function(outputId, data, plotly,
     plotly::plotlyProxy(outputId, session),
     "react",
     finalise_data(plotly, new_data),
-    reset_x_range(plotly$x$layout),
+    reset_x_range(plotly$x$layout, clear = clear),
     plotly$x$config
   )
 }
 
-reset_x_range <- function(layout) {
+reset_x_range <- function(layout, clear = FALSE) {
   # TODO: x as linear type but should be contextual ticktext
   xaxis <- names(layout)[grepl("xaxis", names(layout))]
   for (i in xaxis) {
-    layout[[i]]$tickvals <- layout[[i]]$ticktext <- NULL
+    if (clear) {
+      layout[[i]]$tickvals <- numeric()
+      layout[[i]]$ticktext <- character()
+    } else {
+      layout[[i]]$tickvals <- layout[[i]]$ticktext <- NULL
+    }
     layout[[i]]$autorange <- TRUE # ggplotly panel spacing gone
   }
   layout

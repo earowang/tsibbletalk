@@ -62,11 +62,10 @@ tsibbleDiceServer <- function(id, plot, period) {
           pre = period$label, animate = TRUE, width = "100%"
         )
       })
-      output$plot <- renderPlotly(plot)
       observeEvent(input$unit, {
-        if (input$unit == period$max) return()
+        if (input$unit == period$max) return(output$plot <- renderPlotly(plot))
         new_data <- dice_tsibble(data, period$to, input$unit, period$scale)
-        plotlyReact("plot", new_data, plot)
+        plotlyReact("plot", new_data, plot, clear = input$unit == 0)
       })
     }
   )
