@@ -87,15 +87,7 @@ finalise_data <- function(p, data) {
 plotlyReact <- function(outputId, data, plotly, clear = FALSE,
                         session = shiny::getDefaultReactiveDomain()) {
   new_data <- plotlyReactData(plotly, data)
-  if (is_ggplot(plotly)) {
-    plotly$data <- mutate(plotly$data, ".GROUP" := 1L)
-    plotly$mapping$group <- as_quosure(expr(.GROUP),
-      env = get_env(plotly$mapping$x))
-    plotly <- plotly::layout(plotly::ggplotly(plotly),
-      xaxis = list(autorange = TRUE))
-  } else {
-    plotly <- plotly::plotly_build(plotly)
-  }
+  plotly <- plotly::plotly_build(plotly)
   plotly::plotlyProxyInvoke(
     plotly::plotlyProxy(outputId, session),
     "react",

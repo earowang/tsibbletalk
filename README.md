@@ -24,14 +24,12 @@ remotes::install_github("earowang/tsibbletalk")
 ## Get started
 
 ``` r
-library(plotly)
-library(feasts)
 library(tsibble)
 library(tsibbletalk)
-
 tourism_shared <- tourism %>%
   as_shared_tsibble(spec = (State / Region) * Purpose)
 
+library(feasts)
 tourism_feat <- tourism_shared %>%
   features(Trips, feat_stl)
 
@@ -44,6 +42,7 @@ p2 <- tourism_feat %>%
   ggplot(aes(x = trend_strength, y = seasonal_strength_year)) +
   geom_point(aes(group = Region))
 
+library(plotly)
 subplot(p0,
   subplot(
     ggplotly(p1, tooltip = "Region", width = 900),
@@ -56,17 +55,16 @@ subplot(p0,
 ![](man/figures/tourism-crosstalk.gif)
 
 ``` r
-library(shiny)
-ped2015 <- pedestrian %>%
+p <- fill_gaps(pedestrian) %>%
   filter_index(~ "2015") %>% 
-  fill_gaps()
+  ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
+  geom_line(size = .2) +
+  facet_wrap(~ Sensor, scales = "free_y") +
+  theme(legend.position = "none")
+
+library(shiny)
 ui <- fluidPage(tsibbleDiceUI("tswrap"))
 server <- function(input, output, session) {
-  p <- ped2015 %>%
-    ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
-    geom_line(size = .2) +
-    facet_wrap(~ Sensor, scales = "free_y") +
-    theme(legend.position = "none")
   tsibbleDiceServer("tswrap", p, period = "1 day")
 }
 shinyApp(ui, server)

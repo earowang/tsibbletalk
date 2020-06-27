@@ -4,7 +4,7 @@
 \name{tsibbletalk-package}
 \alias{tsibbletalk}
 \alias{tsibbletalk-package}
-\title{tsibbletalk: Crosstalk Between Tsibble-like Objects}
+\title{tsibbletalk: Crosstalk Between Tsibble Objects}
 \description{
 A shared tsibble data easily communicates between htmlwidgets on
     the client side, powered by 'crosstalk'. A shiny module is provided to

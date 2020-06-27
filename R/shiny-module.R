@@ -51,6 +51,7 @@ tsibbleDiceServer <- function(id, plot, period) {
         plot <- ggplotly(plot)
       } else {
         data <- plotly_data(plot)
+        plot <- plotly::plotly_build(plot)
       }
       idx <- data[[tsibble::index_var(data)]]
       period <- parse_period(idx, period)

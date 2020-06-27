@@ -9,7 +9,7 @@ sx <- pedestrian %>%
   filter(
     Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station"),
     Date <= as.Date('2015-04-21')
-  ) %>% as_shared_tsibble()
+  )
 
 ui <- fluidPage(
   tsibbleDiceUI("dice")
@@ -32,7 +32,7 @@ server <- function(input, output, session) {
   p0 <- sx2 %>%
     plot_ly(x = ~ Date_Time, y = ~ Count, color = ~ Sensor) %>%
     add_lines()
-  tsibbleDiceServer("a", sx2, "1 day", p0)
+  tsibbleDiceServer("dice", p0, "1 day")
 }
 
 shinyApp(ui, server)
