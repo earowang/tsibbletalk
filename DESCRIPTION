@@ -13,7 +13,7 @@ Authors@R:
              comment = c(ORCID = "0000-0002-3813-7155")))
 Description: A shared tsibble data easily communicates between htmlwidgets on
     the client side, powered by 'crosstalk'. A shiny module is provided to
-    visually explore periodic/sporadic temporal pattern.
+    visually explore periodic/aperiodic temporal pattern.
 License: GPL-3
 Imports: 
     crosstalk (>= 1.1.0.1),

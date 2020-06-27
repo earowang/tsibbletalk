@@ -4,7 +4,7 @@
 #'
 #' @param id A unique shiny id.
 #' @param plot A `ggplot` or `plotly` object.
-#' @param period A string passed to [lubridate::period()] to specify the minimul
+#' @param period A string passed to [lubridate::period()] to specify the minimum
 #' seasonal period, for example `"1 day"`.
 #' @name tsibble-dice
 #' @examples
@@ -74,13 +74,27 @@ tsibbleDiceServer <- function(id, plot, period) {
 
 #' @importFrom lubridate period
 parse_period <- function(x, period) {
+  UseMethod("parse_period")
+}
+
+parse_period.POSIXt <- function(x, period) {
   period <- period(period)
   if (period$day != 0) {
     to <- new_date()
     unit <- period$day
     scale <- 3600
     label <- "day "
-  }  
+  }
+  max <- vec_size(vec_unique(date_floor(x, to = to, unit = 1))) + 1
+  list(to = to, unit = unit, scale = scale, max = max, label = label)
+}
+
+parse_period.yearquarter <- function(x, period) {
+  period <- period(period)
+  to <- double()
+  unit <- period$year
+  scale <- 1
+  label <- "year "
   max <- vec_size(vec_unique(date_floor(x, to = to, unit = 1))) + 1
   list(to = to, unit = unit, scale = scale, max = max, label = label)
 }

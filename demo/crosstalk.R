@@ -10,7 +10,7 @@ tourism_shared <- tourism %>%
 tourism_feat <- tourism_shared %>%
   features(Trips, feat_stl)
 
-p0 <- plotly_key_tree(tourism_shared, height = 800, width = 600)
+p0 <- plotly_key_tree(tourism_shared, height = 900, width = 600)
 p1 <- tourism_shared %>%
   ggplot(aes(x = Quarter, y = Trips)) +
   geom_line(aes(group = Region), alpha = 0.5) +
@@ -21,8 +21,8 @@ p2 <- tourism_feat %>%
 
 subplot(p0,
   subplot(
-    ggplotly(p1, tooltip = "Region", width = 800),
-    ggplotly(p2, tooltip = "Region", width = 800),
+    ggplotly(p1, tooltip = "Region", width = 900),
+    ggplotly(p2, tooltip = "Region", width = 900),
     nrows = 2),
   widths = c(.4, .6)) %>%
   highlight(dynamic = TRUE)

@@ -15,7 +15,7 @@ tsibbleDiceServer(id, plot, period)
 
 \item{plot}{A \code{ggplot} or \code{plotly} object.}
 
-\item{period}{A string passed to \code{\link[lubridate:period]{lubridate::period()}} to specify the minimul
+\item{period}{A string passed to \code{\link[lubridate:period]{lubridate::period()}} to specify the minimum
 seasonal period, for example \code{"1 day"}.}
 }
 \description{

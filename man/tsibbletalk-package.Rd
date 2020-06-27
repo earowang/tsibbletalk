@@ -8,7 +8,7 @@
 \description{
 A shared tsibble data easily communicates between htmlwidgets on
     the client side, powered by 'crosstalk'. A shiny module is provided to
-    visually explore periodic/sporadic temporal pattern.
+    visually explore periodic/aperiodic temporal pattern.
 }
 \author{
 \strong{Maintainer}: Earo Wang \email{earo.wang@gmail.com} (\href{https://orcid.org/0000-0001-6448-5260}{ORCID})
