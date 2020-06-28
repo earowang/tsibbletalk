@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-The goal of tsibbletalk is to ...
+A *tsibble* consists of index, key, and other measured variables. The key identifies series/panels of interests, which often remain the same during the exploration loop. Understanding multi-faceted data requires an ensemble of graphics, and linked brushing via `key` will accelerate the exploratory data visualisation process. The {tsibbletalk} package introduces shared `key` to the *tsibble*, to easily [{crosstalk}](https://rstudio.github.io/crosstalk/) between plots on both client and server sides (i.e. with or without shiny).
 
 ## Installation
 
@@ -30,17 +30,26 @@ remotes::install_github("earowang/tsibbletalk")
 
 ## Get started
 
+### Linking views via shared tsibble
+
+The `as_shared_tsibble()` turns a tsibble object to a shared tsibble. If there's any nesting/hierarchical structure in the key variables, the `spec` argument should be supplied for the structural specification. For example, the structure in the `tourism` data contains the geographical hierarchy, `State` nesting (`/`) lower-level `Region`s, and each location crossed (`*`) with the trip `Purpose`. The `plotly_key_tree()` visualises the tree structure specified in the `spec`, which is helpful in navigating interested series for later.
+
 ```{r shared}
 library(tsibble)
 library(tsibbletalk)
 tourism_shared <- tourism %>%
   as_shared_tsibble(spec = (State / Region) * Purpose)
+p0 <- plotly_key_tree(tourism_shared, height = 900, width = 600)
+```
 
+Multiple displays are constructed: (1) the overall tree plot in the left panel, (2) the time series plot in the top right, and (3) the scatterplot representing featured metrics for each series, produced by the `features()`. All known functions here, but (yes) generate linking views.
+
+```{r ensemble}
 library(feasts)
 tourism_feat <- tourism_shared %>%
   features(Trips, feat_stl)
 
-p0 <- plotly_key_tree(tourism_shared, height = 900, width = 600)
+library(ggplot2)
 p1 <- tourism_shared %>%
   ggplot(aes(x = Quarter, y = Trips)) +
   geom_line(aes(group = Region), alpha = 0.5) +
@@ -60,6 +69,10 @@ subplot(p0,
 ```
 
 ![](man/figures/tourism-crosstalk.gif)
+
+### Slicing and dicing on server-side
+
+The `key` carries nested and crossed embeddings, and the `index` provides temporal information. Slicing and dicing time index can help to build richer profiles for each series. A shiny module, a pair of UI and server functions, is provided to interactively slice and dice a *tsibble*. This allows to quickly locate an interesting slice over time.
 
 ```{r shiny}
 p <- fill_gaps(pedestrian) %>%
