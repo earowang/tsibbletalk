@@ -43,7 +43,6 @@ date_dice.yearquarter.double <- function(x, by) {
 }
 
 date_floor <- function(x, to, unit = 1) {
-  if (unit == 0) return(vec_init_along(x))
   UseMethod("date_floor", x)
 }
 

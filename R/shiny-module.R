@@ -10,18 +10,20 @@
 #' @examples
 #' if (interactive()) {
 #'   library(tsibble)
+#'   library(dplyr)
 #'   library(shiny)
 #'   library(ggplot2)
 #' 
 #'   ui <- fluidPage(tsibbleDiceUI("dice"))
 #' 
 #'   server <- function(input, output, session) {
-#'     p <- fill_gaps(pedestrian) %>%
-#'       ggplot(aes(x = Date_Time, y = Count), alpha = .6) +
+#'     p <- tourism %>%
+#'       filter(Region %in% c("Melbourne", "Sydney")) %>% 
+#'       ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
 #'       geom_line() +
-#'       facet_wrap(~ Sensor, scales = "free_y") +
+#'       facet_wrap(~ Purpose, scales = "free_y") +
 #'       theme(legend.position = "none")
-#'     tsibbleDiceServer("dice", p, period = "1 day")
+#'     tsibbleDiceServer("dice", p, period = "1 year")
 #'   }
 #'   shinyApp(ui, server)
 #' }
