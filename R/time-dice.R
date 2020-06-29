@@ -60,6 +60,14 @@ date_floor.POSIXt.Date <- function(x, to = new_date(), unit = 1) {
   anchor + floor(diff / unit) * unit
 }
 
+#' @importFrom tsibble yearweek
+date_floor.POSIXt.yearweek <- function(x, to = yearweek(), unit = 1) {
+  x <- yearweek(x)
+  min_x <- min(x)
+  diff <- as.double(x) - as.double(min_x)
+  min_x + floor(diff / unit) * unit
+}
+
 date_floor.yearquarter <- function(x, to = double(), unit = 1) {
   UseMethod("date_floor.yearquarter", to)
 }

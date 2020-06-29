@@ -5,10 +5,11 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 
+# ggplot: daily
 sx <- pedestrian %>%
   filter(
     Sensor %in% c("Bourke Street Mall (North)", "Southern Cross Station"),
-    Date <= as.Date('2015-04-21')
+    Date <= as.Date('2015-12-31')
   )
 
 ui <- fluidPage(
@@ -18,13 +19,14 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   p0 <- sx %>%
     ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
-    geom_line() +
+    geom_line(size = .2) +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
   tsibbleDiceServer("dice", p0, period = "1 day")
 }
 shinyApp(ui, server)
 
+# plotly
 sx2 <- sx %>%
   filter(Sensor %in% c("Southern Cross Station"))
 
@@ -34,39 +36,15 @@ server <- function(input, output, session) {
     add_lines()
   tsibbleDiceServer("dice", p0, "1 day")
 }
-
 shinyApp(ui, server)
 
-sx <- pedestrian %>%
-  filter(Sensor %in% c("Southern Cross Station")) %>%
-  filter(Date <= as.Date('2015-06-30'))
-
-sx %>%
-  mutate(
-    # Date = yearmonth(Date),
-    Date = yearmonth(floor_date(Date, '2 months')),
-    Time = dice_date(Date_Time, Date),
-    Date = as.factor(Date)
-  ) %>%
-  ggplot(aes(x = Time, y = Count, colour = Date)) +
-  geom_line() +
-  NULL
-  # scale_x_time(
-  #   breaks = hms::hms(hour = seq(from = 12, by = 24, length.out = 7)),
-  #   labels = c("M", "T", "W", "T", "F", "S", "S")
-  # )
-
-sx <- pedestrian %>%
-  filter(Sensor %in% c("Southern Cross Station")) %>%
-  filter(as.Date('2015-01-05') <=  Date, Date <= as.Date('2015-01-21'))
-
-sx %>%
-  mutate(
-    # Date = yearmonth(Date),
-    Date = yearweek(floor_date(yearweek(Date), '1 week')),
-    Time = dice_date.POSIXt.yearweek(Date_Time, Date),
-    Date = as.factor(as_date(Date))
-  ) %>%
-  ggplot(aes(x = Time, y = Count, colour = Date)) +
-  geom_line() +
-  NULL
+# weekly
+server <- function(input, output, session) {
+  p0 <- sx %>%
+    ggplot(aes(x = Date_Time, y = Count, colour = Sensor)) +
+    geom_line(size = .2) +
+    facet_wrap(~ Sensor) +
+    theme(legend.position = "none")
+  tsibbleDiceServer("dice", p0, period = "1 week")
+}
+shinyApp(ui, server)

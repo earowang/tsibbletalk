@@ -80,10 +80,16 @@ parse_period <- function(x, period) {
 }
 
 parse_period.POSIXt <- function(x, period) {
-  period <- period(period)
-  if (period$day != 0) {
+  is_week <- is_week_period(period)
+  x_period <- period(period)
+  if (is_week) {
+    to <- yearweek()
+    unit <- as.double(gsub("([0-9]+).*$", "\\1", period))
+    scale <- 3600
+    label <- "week "
+  } else if (x_period$day != 0) {
     to <- new_date()
-    unit <- period$day
+    unit <- x_period$day
     scale <- 3600
     label <- "day "
   }
@@ -109,4 +115,8 @@ dice_tsibble <- function(data, to, unit, scale) {
     !!idx := date_dice(!!idx, .GROUP) / scale,
     ".GROUP" := as.factor(.GROUP)
   )
+}
+
+is_week_period <- function(x) {
+  grepl("(w)|(week)", x, ignore.case = TRUE) 
 }
