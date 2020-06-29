@@ -13,12 +13,19 @@ features.SharedTsibbleData <- function(.tbl, .var, features, ...) {
   reconstruct_shared_tsibble(out, .tbl)
 }
 
-model.SharedTsibbleData <- function() {
-  
+model.SharedTsibbleData <- function(.data, ...) {
+  out <- fabletools::model(as_tsibble(.data), ...)
+  reconstruct_shared_tsibble(out, .data)
 }
 
-components.SharedTsibbleData <- function() {
-  
+components.SharedTsibbleData <- function(object, ...) {
+  out <- fabletools::components(as_tibble(object), ...)
+  reconstruct_shared_tsibble(out, object)
+}
+
+forecast.SharedTsibbleData <- function(object, ...) {
+  out <- fabletools::forecast(as_tibble(object), ...)
+  reconstruct_shared_tsibble(out, object)
 }
 
 #' @export
