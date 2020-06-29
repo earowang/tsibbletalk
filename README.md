@@ -83,11 +83,11 @@ subplot(p0,
 
 ### Slicing and dicing on server-side
 
-The `key` carries nested and crossed embeddings, and the `index`
-provides temporal information. Slicing and dicing time index can help to
-build richer profiles for each series. A shiny module, a pair of UI and
-server functions, is provided to interactively slice and dice a
-*tsibble*. This allows to quickly locate an interesting slice over time.
+The `key` carries nested and crossed embedding, and the `index` provides
+temporal information. Slicing and dicing time index can help to build
+richer profiles for each series. A shiny module, a pair of UI and server
+functions, is provided to interactively slice and dice a *tsibble*. This
+allows to quickly locate an interesting slice in time.
 
 ``` r
 p <- fill_gaps(pedestrian) %>%

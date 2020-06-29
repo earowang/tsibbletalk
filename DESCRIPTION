@@ -12,8 +12,8 @@ Authors@R:
              role = c("aut"),
              comment = c(ORCID = "0000-0002-3813-7155")))
 Description: A shared tsibble data easily communicates between htmlwidgets on
-    the client side, powered by 'crosstalk'. A shiny module is provided to
-    visually explore periodic/aperiodic temporal pattern.
+    both client and server sides, powered by 'crosstalk'. A shiny module is
+    provided to visually explore periodic/aperiodic temporal patterns.
 License: GPL-3
 Imports: 
     crosstalk (>= 1.1.0.1),
