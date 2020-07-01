@@ -1,7 +1,7 @@
 globalVariables(".GROUP")
 
 clean_plotly_attrs <- function(x) {
-  stopifnot(is_formula(x))
+  if (!is_formula(x)) return(NULL)
   nm <- f_name(x)
   gsub("^~", "", nm)
 }
@@ -76,12 +76,45 @@ finalise_data <- function(p, data) {
   y_chr <- clean_plotly_attrs(p$x$attrs[[1]]$y)
   grps <- group_vars(group_by(plotly_data(p), ".GROUP" := 1L))
   data_lst <- map(data, function(x) plotly::group2NA(x, grps))
-  # TODO: missing 'text' as tooptip
-  map2(
-    data_lst,
-    p$x$data,
-    function(x, y) list2(x = x[[x_chr]], y = x[[y_chr]], !!!y[-(1:3)])
-  )
+  if (!is_aes_mapping_present(p)) {
+    map2(
+      data_lst,
+      p$x$data,
+      function(x, y) list2(
+        x = x[[x_chr]], y = x[[y_chr]], 
+        text = parse_tooltip(
+          !!x_chr := paste(x[[x_chr]], x[[grps]], sep = " @ "),
+          !!y_chr := x[[y_chr]]),
+        !!!y[-(1:3)])
+    )
+  } else {
+    col_chr <- clean_plotly_attrs(p$x$attrs[[1]]$colour)
+    map2(
+      data_lst,
+      p$x$data,
+      function(x, y) list2(
+        x = x[[x_chr]], y = x[[y_chr]], 
+        text = parse_tooltip(
+          !!x_chr := paste(x[[x_chr]], x[[grps]], sep = " @ "),
+          !!y_chr := x[[y_chr]],
+          !!col_chr := x[[col_chr]]),
+        !!!y[-(1:3)])
+    )
+  }
+}
+
+parse_tooltip <- function(...) {
+  tbl <- new_data_frame(list2(...))
+  paste_text(tbl)
+}
+
+paste_text <- function(data) {
+  nm <- names(data)
+  msg <- map(seq_along(nm), function(x) 
+    paste(nm[x], curly_braces(nm[x]), sep = ": "))
+  as.character(eval_tidy(quo(
+    glue_data(!!data, !!!msg, .sep = "<br />", .envir = !!caller_env())
+  )))
 }
 
 plotlyReact <- function(outputId, data, plotly, clear = FALSE,
