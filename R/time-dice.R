@@ -42,6 +42,16 @@ date_dice.yearquarter.double <- function(x, by) {
   x - by_qtr + 1
 }
 
+date_dice.yearmonth <- function(x, by = NULL) {
+  UseMethod("date_dice.yearmonth", by)
+}
+
+#' @importFrom tsibble yearmonth
+date_dice.yearmonth.double <- function(x, by) {
+  by_mth <- yearmonth((by - 1970) * 12)
+  x - by_mth + 1
+}
+
 date_floor <- function(x, to, unit = 1) {
   UseMethod("date_floor", x)
 }
@@ -78,5 +88,18 @@ date_floor.yearquarter.double <- function(x, to = double(), unit = 1) {
   qtr_x <- quarter(min_x)
   anchor <- min_x - qtr_x + 1 # anchor to Q1
   diff <- (as.double(x) - as.double(anchor)) / 4
+  year(anchor) + floor(diff / unit) * unit
+}
+
+date_floor.yearmonth <- function(x, to = double(), unit = 1) {
+  UseMethod("date_floor.yearmonth", to)
+}
+
+#' @importFrom lubridate month
+date_floor.yearmonth.double <- function(x, to = double(), unit = 1) {
+  min_x <- min(x)
+  mth_x <- month(min_x)
+  anchor <- min_x - mth_x + 1 # anchor to Jan
+  diff <- (as.double(x) - as.double(anchor)) / 12
   year(anchor) + floor(diff / unit) * unit
 }
