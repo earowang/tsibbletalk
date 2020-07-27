@@ -109,6 +109,8 @@ parse_period.yearquarter <- function(x, period) {
 
 parse_period.yearmonth <- parse_period.yearquarter
 
+parse_period.double <- parse_period.yearquarter
+
 #' @importFrom dplyr mutate as_tibble
 dice_tsibble <- function(data, to, unit, scale) {
   idx <- tsibble::index(data)

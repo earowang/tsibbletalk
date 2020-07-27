@@ -52,6 +52,14 @@ date_dice.yearmonth.double <- function(x, by) {
   x - by_mth + 1
 }
 
+date_dice.double <- function(x, by = NULL) {
+  UseMethod("date_dice.double", by)
+}
+
+date_dice.double.double <- function(x, by) {
+  x - by
+}
+
 date_floor <- function(x, to, unit = 1) {
   UseMethod("date_floor", x)
 }
@@ -102,4 +110,13 @@ date_floor.yearmonth.double <- function(x, to = double(), unit = 1) {
   anchor <- min_x - mth_x + 1 # anchor to Jan
   diff <- (as.double(x) - as.double(anchor)) / 12
   year(anchor) + floor(diff / unit) * unit
+}
+
+date_floor.double <- function(x, to = double(), unit = 1) {
+  UseMethod("date_floor.double", to)
+}
+
+date_floor.double.double <- function(x, to = double(), unit = 1) {
+  anchor <- min(x)
+  anchor + floor((x - anchor) / unit) * unit
 }
