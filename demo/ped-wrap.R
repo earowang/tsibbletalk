@@ -26,6 +26,20 @@ server <- function(input, output, session) {
 }
 shinyApp(ui, server)
 
+# yearweek
+server <- function(input, output, session) {
+  p0 <- sx %>%
+    group_by_key() %>%
+    index_by(yw = yearweek(Date_Time)) %>%
+    summarise(Count = sum(Count)) %>%
+    ggplot(aes(x = yw, y = Count, colour = Sensor)) +
+    geom_line(size = .2) +
+    facet_wrap(~ Sensor) +
+    theme(legend.position = "none")
+  tsibbleDiceServer("dice", p0, period = "1 day")
+}
+shinyApp(ui, server)
+
 # plotly
 sx2 <- sx %>%
   filter(Sensor %in% c("Southern Cross Station"))

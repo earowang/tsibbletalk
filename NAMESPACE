@@ -2,8 +2,10 @@
 
 S3method(as_tibble,SharedTsibbleData)
 S3method(as_tsibble,SharedTsibbleData)
+S3method(mutate,SharedTsibbleData)
 export("%>%")
 export(as_shared_tsibble)
+export(filter.SharedTsibbleData)
 export(plotly_key_tree)
 export(tsibbleDiceServer)
 export(tsibbleDiceUI)

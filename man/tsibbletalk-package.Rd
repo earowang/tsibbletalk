@@ -6,9 +6,10 @@
 \alias{tsibbletalk-package}
 \title{tsibbletalk: Crosstalk Between Tsibble Objects}
 \description{
-A shared tsibble data easily communicates between htmlwidgets on
-    both client and server sides, powered by 'crosstalk'. A shiny module is
-    provided to visually explore periodic/aperiodic temporal patterns.
+A shared tsibble data easily communicates between
+    htmlwidgets on both client and server sides, powered by 'crosstalk'. A
+    shiny module is provided to visually explore periodic/aperiodic
+    temporal patterns.
 }
 \author{
 \strong{Maintainer}: Earo Wang \email{earo.wang@gmail.com} (\href{https://orcid.org/0000-0001-6448-5260}{ORCID})
