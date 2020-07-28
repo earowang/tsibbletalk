@@ -57,7 +57,7 @@ date_dice.double <- function(x, by = NULL) {
 }
 
 date_dice.double.double <- function(x, by) {
-  x - by
+  x - by + 1
 }
 
 date_floor <- function(x, to, unit = 1) {
