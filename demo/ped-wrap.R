@@ -13,7 +13,7 @@ sx <- pedestrian %>%
   )
 
 ui <- fluidPage(
-  tsibbleDiceUI("dice")
+  tsibbleWrapUI("dice")
 )
 
 server <- function(input, output, session) {
@@ -22,7 +22,7 @@ server <- function(input, output, session) {
     geom_line(size = .2) +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
-  tsibbleDiceServer("dice", p0, period = "1 day")
+  tsibbleWrapServer("dice", p0, period = "1 day")
 }
 shinyApp(ui, server)
 
@@ -36,7 +36,7 @@ server <- function(input, output, session) {
     geom_line(size = .2) +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
-  tsibbleDiceServer("dice", p0, period = "1 day")
+  tsibbleWrapServer("dice", p0, period = "1 day")
 }
 shinyApp(ui, server)
 
@@ -48,7 +48,7 @@ server <- function(input, output, session) {
   p0 <- sx2 %>%
     plot_ly(x = ~ Date_Time, y = ~ Count, color = ~ Sensor) %>%
     add_lines()
-  tsibbleDiceServer("dice", p0, "1 day")
+  tsibbleWrapServer("dice", p0, "1 day")
 }
 shinyApp(ui, server)
 
@@ -59,6 +59,6 @@ server <- function(input, output, session) {
     geom_line(size = .2) +
     facet_wrap(~ Sensor) +
     theme(legend.position = "none")
-  tsibbleDiceServer("dice", p0, period = "1 week")
+  tsibbleWrapServer("dice", p0, period = "1 week")
 }
 shinyApp(ui, server)

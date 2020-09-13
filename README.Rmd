@@ -83,9 +83,9 @@ p <- fill_gaps(pedestrian) %>%
   theme(legend.position = "none")
 
 library(shiny)
-ui <- fluidPage(tsibbleDiceUI("tswrap"))
+ui <- fluidPage(tsibbleWrapUI("tswrap"))
 server <- function(input, output, session) {
-  tsibbleDiceServer("tswrap", p, period = "1 day")
+  tsibbleWrapServer("tswrap", p, period = "1 day")
 }
 shinyApp(ui, server)
 ```

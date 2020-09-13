@@ -13,9 +13,9 @@ p0 <- melb_syd %>%
   theme(legend.position = "none")
 
 ui <- fluidPage(
-  tsibbleDiceUI("dice")
+  tsibbleWrapUI("dice")
 )
 server <- function(input, output, session) {
-  tsibbleDiceServer("dice", p0, period = "1 year")
+  tsibbleWrapServer("dice", p0, period = "1 year")
 }
 shinyApp(ui, server)

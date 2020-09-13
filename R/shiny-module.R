@@ -1,12 +1,12 @@
 #' A shiny module to easily slice and dice tsibble index for visualising periodicity
 #'
-#' A pair of UI and server functions: `tsibbleDiceUI()` and `tsibbleDiceServer()`.
+#' A pair of UI and server functions: `tsibbleWrapUI()` and `tsibbleWrapServer()`.
 #'
 #' @param id A unique shiny id.
 #' @param plot A `ggplot` or `plotly` object.
 #' @param period A string passed to [lubridate::period()] to specify the minimum
 #' seasonal period, for example `"1 day"`.
-#' @name tsibble-dice
+#' @name tsibble-wrap
 #' @examples
 #' if (interactive()) {
 #'   library(tsibble)
@@ -14,7 +14,7 @@
 #'   library(shiny)
 #'   library(ggplot2)
 #' 
-#'   ui <- fluidPage(tsibbleDiceUI("dice"))
+#'   ui <- fluidPage(tsibbleWrapUI("dice"))
 #' 
 #'   server <- function(input, output, session) {
 #'     p <- tourism %>%
@@ -23,7 +23,7 @@
 #'       geom_line() +
 #'       facet_wrap(~ Purpose, scales = "free_y") +
 #'       theme(legend.position = "none")
-#'     tsibbleDiceServer("dice", p, period = "1 year")
+#'     tsibbleWrapServer("dice", p, period = "1 year")
 #'   }
 #'   shinyApp(ui, server)
 #' }
@@ -32,9 +32,9 @@ NULL
 #' @importFrom shiny NS tagList uiOutput moduleServer observeEvent renderUI
 #' @importFrom shiny sliderInput
 #' @importFrom plotly plotlyOutput ggplotly renderPlotly
-#' @rdname tsibble-dice
+#' @rdname tsibble-wrap
 #' @export
-tsibbleDiceUI <- function(id) {
+tsibbleWrapUI <- function(id) {
   ns <- NS(id)
   tagList(
     uiOutput(ns("period")),
@@ -42,9 +42,9 @@ tsibbleDiceUI <- function(id) {
   )
 }
 
-#' @rdname tsibble-dice
+#' @rdname tsibble-wrap
 #' @export
-tsibbleDiceServer <- function(id, plot, period) {
+tsibbleWrapServer <- function(id, plot, period) {
   moduleServer(
     id,
     function(input, output, session) {
