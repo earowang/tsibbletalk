@@ -23,3 +23,13 @@
 #' @examples
 #' data(tourism_monthly)
 "tourism_monthly"
+
+#' Yearly mean total sunspot number [1700 - 2019]
+#'
+#' @references [WDC-SILSO, Royal Observatory of Belgium, Brussels](http://www.sidc.be/silso/datafiles)
+#' @docType data
+#' @name sunspots2019
+#' @usage sunspots2019
+#' @examples
+#' data(sunspots2019)
+"sunspots2019"
