@@ -24,12 +24,9 @@ date_dice.POSIXt.yearweek <- date_dice.POSIXt.POSIXt
 
 date_dice.POSIXt.yearmonth <- date_dice.POSIXt.POSIXt
 
-date_dice.POSIXt.yearquarter <- date_dice.POSIXt.POSIXt
-
+#' @importFrom lubridate make_date
 date_dice.POSIXt.numeric <- function(x, by) {
-  # TODO: extend for years > 1
-  lt <- as.POSIXlt(x)
-  lt$sec + lt$min * 60 + lt$hour * 3600 + (lt$yday - 1) * 86400
+  date_dice.POSIXt.POSIXt(x, make_date(by))
 }
 
 date_dice.yearquarter <- function(x, by = NULL) {
@@ -81,6 +78,22 @@ date_floor.POSIXt.Date <- function(x, to = new_date(), unit = 1) {
 #' @importFrom tsibble yearweek
 date_floor.POSIXt.yearweek <- function(x, to = yearweek(), unit = 1) {
   x <- yearweek(x)
+  min_x <- min(x)
+  diff <- as.double(x) - as.double(min_x)
+  min_x + floor(diff / unit) * unit
+}
+
+#' @importFrom tsibble yearmonth
+date_floor.POSIXt.yearmonth <- function(x, to = yearmonth(), unit = 1) {
+  x <- yearmonth(x)
+  min_x <- min(x)
+  diff <- as.double(x) - as.double(min_x)
+  min_x + floor(diff / unit) * unit
+}
+
+#' @importFrom lubridate floor_date
+date_floor.POSIXt.numeric <- function(x, to = numeric(), unit = 1) {
+  x <- floor_date(x, unit = paste(unit, "year"))
   min_x <- min(x)
   diff <- as.double(x) - as.double(min_x)
   min_x + floor(diff / unit) * unit

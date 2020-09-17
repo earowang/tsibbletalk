@@ -82,18 +82,25 @@ parse_period <- function(x, period) {
 parse_period.POSIXt <- function(x, period) {
   is_week <- is_week_period(period)
   x_period <- period(period)
+  scale <- 3600
   if (is_week) {
     to <- yearweek()
     unit <- as.double(gsub("([0-9]+).*$", "\\1", period))
-    scale <- 3600
     label <- "week "
   } else if (x_period$day != 0) {
     to <- new_date()
     unit <- x_period$day
-    scale <- 3600
     label <- "day "
+  } else if (x_period$month != 0) {
+    to <- yearmonth()
+    unit <- x_period$month
+    label <- "month "
+  } else { # year
+    to <- double()
+    unit <- x_period$year
+    label <- "year "
   }
-  max <- vec_size(vec_unique(date_floor(x, to = to, unit = 1))) + 1
+  max <- vec_size(vec_unique(date_floor(x, to = to, unit = 1)))
   list(to = to, unit = unit, scale = scale, max = max, label = label)
 }
 
