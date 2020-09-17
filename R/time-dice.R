@@ -26,7 +26,7 @@ date_dice.POSIXt.yearmonth <- date_dice.POSIXt.POSIXt
 
 date_dice.POSIXt.yearquarter <- date_dice.POSIXt.POSIXt
 
-date_dice.POSIXt.double <- function(x, by) {
+date_dice.POSIXt.numeric <- function(x, by) {
   # TODO: extend for years > 1
   lt <- as.POSIXlt(x)
   lt$sec + lt$min * 60 + lt$hour * 3600 + (lt$yday - 1) * 86400
@@ -37,7 +37,7 @@ date_dice.yearquarter <- function(x, by = NULL) {
 }
 
 #' @importFrom tsibble yearquarter
-date_dice.yearquarter.double <- function(x, by) {
+date_dice.yearquarter.numeric <- function(x, by) {
   by_qtr <- yearquarter((by - 1970) * 4)
   x - by_qtr + 1
 }
@@ -47,16 +47,16 @@ date_dice.yearmonth <- function(x, by = NULL) {
 }
 
 #' @importFrom tsibble yearmonth
-date_dice.yearmonth.double <- function(x, by) {
+date_dice.yearmonth.numeric <- function(x, by) {
   by_mth <- yearmonth((by - 1970) * 12)
   x - by_mth + 1
 }
 
-date_dice.double <- function(x, by = NULL) {
-  UseMethod("date_dice.double", by)
+date_dice.numeric <- function(x, by = NULL) {
+  UseMethod("date_dice.numeric", by)
 }
 
-date_dice.double.double <- function(x, by) {
+date_dice.numeric.numeric <- function(x, by) {
   x - by + 1
 }
 
@@ -91,7 +91,7 @@ date_floor.yearquarter <- function(x, to = double(), unit = 1) {
 }
 
 #' @importFrom lubridate quarter year
-date_floor.yearquarter.double <- function(x, to = double(), unit = 1) {
+date_floor.yearquarter.numeric <- function(x, to = double(), unit = 1) {
   min_x <- min(x)
   qtr_x <- quarter(min_x)
   anchor <- min_x - qtr_x + 1 # anchor to Q1
@@ -104,7 +104,7 @@ date_floor.yearmonth <- function(x, to = double(), unit = 1) {
 }
 
 #' @importFrom lubridate month
-date_floor.yearmonth.double <- function(x, to = double(), unit = 1) {
+date_floor.yearmonth.numeric <- function(x, to = double(), unit = 1) {
   min_x <- min(x)
   mth_x <- month(min_x)
   anchor <- min_x - mth_x + 1 # anchor to Jan
@@ -112,11 +112,11 @@ date_floor.yearmonth.double <- function(x, to = double(), unit = 1) {
   year(anchor) + floor(diff / unit) * unit
 }
 
-date_floor.double <- function(x, to = double(), unit = 1) {
-  UseMethod("date_floor.double", to)
+date_floor.numeric <- function(x, to = double(), unit = 1) {
+  UseMethod("date_floor.numeric", to)
 }
 
-date_floor.double.double <- function(x, to = double(), unit = 1) {
+date_floor.numeric.numeric <- function(x, to = double(), unit = 1) {
   anchor <- min(x)
   anchor + floor((x - anchor) / unit) * unit
 }

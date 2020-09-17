@@ -32,7 +32,7 @@ if (interactive()) {
 
   server <- function(input, output, session) {
     p <- tourism \%>\%
-      filter(Region \%in\% c("Melbourne", "Sydney")) \%>\% 
+      filter(Region \%in\% c("Melbourne", "Sydney")) \%>\%
       ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
       geom_line() +
       facet_wrap(~ Purpose, scales = "free_y") +

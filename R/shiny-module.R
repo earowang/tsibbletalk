@@ -13,12 +13,12 @@
 #'   library(dplyr)
 #'   library(shiny)
 #'   library(ggplot2)
-#' 
+#'
 #'   ui <- fluidPage(tsibbleWrapUI("dice"))
-#' 
+#'
 #'   server <- function(input, output, session) {
 #'     p <- tourism %>%
-#'       filter(Region %in% c("Melbourne", "Sydney")) %>% 
+#'       filter(Region %in% c("Melbourne", "Sydney")) %>%
 #'       ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
 #'       geom_line() +
 #'       facet_wrap(~ Purpose, scales = "free_y") +
@@ -109,7 +109,7 @@ parse_period.yearquarter <- function(x, period) {
 
 parse_period.yearmonth <- parse_period.yearquarter
 
-parse_period.double <- parse_period.yearquarter
+parse_period.numeric <- parse_period.yearquarter
 
 #' @importFrom dplyr mutate as_tibble
 dice_tsibble <- function(data, to, unit, scale) {
@@ -122,5 +122,5 @@ dice_tsibble <- function(data, to, unit, scale) {
 }
 
 is_week_period <- function(x) {
-  grepl("(w)|(week)", x, ignore.case = TRUE) 
+  grepl("(w)|(week)", x, ignore.case = TRUE)
 }
