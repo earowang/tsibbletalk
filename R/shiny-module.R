@@ -13,16 +13,15 @@
 #'   library(dplyr)
 #'   library(shiny)
 #'   library(ggplot2)
+#'   p <- tourism %>%
+#'     filter(Region %in% c("Melbourne", "Sydney")) %>%
+#'     ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
+#'     geom_line() +
+#'     facet_wrap(~ Purpose, scales = "free_y") +
+#'     theme(legend.position = "none")
 #'
 #'   ui <- fluidPage(tsibbleWrapUI("dice"))
-#'
 #'   server <- function(input, output, session) {
-#'     p <- tourism %>%
-#'       filter(Region %in% c("Melbourne", "Sydney")) %>%
-#'       ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
-#'       geom_line() +
-#'       facet_wrap(~ Purpose, scales = "free_y") +
-#'       theme(legend.position = "none")
 #'     tsibbleWrapServer("dice", p, period = "1 year")
 #'   }
 #'   shinyApp(ui, server)
@@ -31,7 +30,7 @@ NULL
 
 #' @importFrom shiny NS tagList uiOutput moduleServer observeEvent renderUI
 #' @importFrom shiny sliderInput
-#' @importFrom plotly plotlyOutput ggplotly renderPlotly
+#' @importFrom plotly plotlyOutput ggplotly renderPlotly plotly_build
 #' @rdname tsibble-wrap
 #' @export
 tsibbleWrapUI <- function(id) {
@@ -53,7 +52,7 @@ tsibbleWrapServer <- function(id, plot, period) {
         plot <- ggplotly(plot)
       } else {
         data <- plotly_data(plot)
-        plot <- plotly::plotly_build(plot)
+        plot <- plotly_build(plot)
       }
       idx <- data[[tsibble::index_var(data)]]
       period <- parse_period(idx, period)

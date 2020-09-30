@@ -36,13 +36,11 @@ as_tsibble.SharedTsibbleData <- function(x, ...) {
 #' @export
 as_tibble.SharedTsibbleData <- as_tsibble.SharedTsibbleData
 
-#' @export
 mutate.SharedTsibbleData <- function(.data, ...) {
   out <- dplyr::mutate(as_tibble(.data), ...)
   reconstruct_shared_tsibble(out, .data)
 }
 
-#' @export
 filter.SharedTsibbleData <- function(.data, ..., .preserve = FALSE) {
   out <- dplyr::filter(as_tibble(.data), ..., .preserve = .preserve)
   reconstruct_shared_tsibble(out, .data)

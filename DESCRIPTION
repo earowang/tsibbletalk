@@ -1,5 +1,5 @@
 Package: tsibbletalk
-Title: Crosstalk Between Tsibble Objects
+Title: Interactive Graphics for Tsibble Objects
 Version: 0.1.0
 Authors@R: 
     c(person(given = "Earo",

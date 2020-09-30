@@ -27,16 +27,15 @@ if (interactive()) {
   library(dplyr)
   library(shiny)
   library(ggplot2)
+  p <- tourism \%>\%
+    filter(Region \%in\% c("Melbourne", "Sydney")) \%>\%
+    ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
+    geom_line() +
+    facet_wrap(~ Purpose, scales = "free_y") +
+    theme(legend.position = "none")
 
   ui <- fluidPage(tsibbleWrapUI("dice"))
-
   server <- function(input, output, session) {
-    p <- tourism \%>\%
-      filter(Region \%in\% c("Melbourne", "Sydney")) \%>\%
-      ggplot(aes(x = Quarter, y = Trips, colour = Region)) +
-      geom_line() +
-      facet_wrap(~ Purpose, scales = "free_y") +
-      theme(legend.position = "none")
     tsibbleWrapServer("dice", p, period = "1 year")
   }
   shinyApp(ui, server)

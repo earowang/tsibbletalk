@@ -3,7 +3,7 @@
 \docType{data}
 \name{sunspots2019}
 \alias{sunspots2019}
-\title{Yearly mean total sunspot number \link{1700 - 2019}}
+\title{Yearly mean total sunspot number (1700 - 2019)}
 \format{
 An object of class \code{tbl_ts} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 320 rows and 2 columns.
 }
@@ -11,7 +11,7 @@ An object of class \code{tbl_ts} (inherits from \code{tbl_df}, \code{tbl}, \code
 sunspots2019
 }
 \description{
-Yearly mean total sunspot number \link{1700 - 2019}
+Yearly mean total sunspot number (1700 - 2019)
 }
 \examples{
 data(sunspots2019)

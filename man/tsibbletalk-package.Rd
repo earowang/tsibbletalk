@@ -4,7 +4,7 @@
 \name{tsibbletalk-package}
 \alias{tsibbletalk}
 \alias{tsibbletalk-package}
-\title{tsibbletalk: Crosstalk Between Tsibble Objects}
+\title{tsibbletalk: Interactive Graphics for Tsibble Objects}
 \description{
 A shared tsibble data easily communicates between
     htmlwidgets on both client and server sides, powered by 'crosstalk'. A
