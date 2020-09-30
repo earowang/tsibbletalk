@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![R build
+status](https://github.com/earowang/tsibbletalk/workflows/R-CMD-check/badge.svg)](https://github.com/earowang/tsibbletalk/actions)
 <!-- badges: end -->
 
 A *tsibble* consists of index, key, and other measured variables. The
