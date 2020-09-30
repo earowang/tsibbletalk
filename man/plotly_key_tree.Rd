@@ -18,3 +18,10 @@ plotly_key_tree(data, height = NULL, width = NULL, ...)
 \description{
 Plot nesting structures in shared tsibbles using plotly
 }
+\examples{
+if (interactive()) {
+  shared_tourism <- as_shared_tsibble(tourism_monthly,
+    spec = (State / Region) * Purpose)
+  plotly_key_tree(shared_tourism)
+}
+}

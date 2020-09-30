@@ -99,6 +99,12 @@ get_xy <- function(node) {
 #' @inheritParams plotly::plot_dendro
 #'
 #' @export
+#' @examples
+#' if (interactive()) {
+#'   shared_tourism <- as_shared_tsibble(tourism_monthly,
+#'     spec = (State / Region) * Purpose)
+#'   plotly_key_tree(shared_tourism)
+#' }
 plotly_key_tree <- function(data, height = NULL, width = NULL, ...) {
   template <- data
   data <- as_tsibble(data)
