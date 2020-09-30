@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 # tsibbletalk
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 A *tsibble* consists of index, key, and other measured variables. The key identifies series/panels of interests, which often remain the same during the exploration loop. Understanding multi-faceted data requires an ensemble of graphics, and linked brushing via `key` will accelerate the exploratory data visualisation process. The {tsibbletalk} package introduces shared `key` to the *tsibble*, to easily [{crosstalk}](https://rstudio.github.io/crosstalk/) between plots on both client and server sides (i.e. with or without shiny).
