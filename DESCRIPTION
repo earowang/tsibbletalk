@@ -1,6 +1,6 @@
 Package: tsibbletalk
 Title: Interactive Graphics for Tsibble Objects
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
     c(person(given = "Earo",
              family = "Wang",
