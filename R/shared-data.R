@@ -63,14 +63,15 @@ as_shared_tsibble <- function(x, spec) {
   vars <- rownames(tm)
   nest_vars <- vars[nest_loc]
   cross_vars <- if (has_length(nest_vars)) vars[-nest_loc] else vars
+  crosstalk_data <- x
   if (!identical(keys, vars)) {
-    x <- as_tsibble(x, key = vars, validate = FALSE)
+    crosstalk_data <- as_tsibble(crosstalk_data, key = vars, validate = FALSE)
   }
   # when both nesting and crossing vars are present, use list() for key
   # otherwise character
   SharedTsibbleData$new(
-    data = x, nesting = nest_vars, crossing = cross_vars,
-    key = ~ parse_key_val(x, nest_vars, cross_vars)
+    data = crosstalk_data, nesting = nest_vars, crossing = cross_vars,
+    key = ~ parse_key_val(crosstalk_data, nest_vars, cross_vars)
   )
 }
 
