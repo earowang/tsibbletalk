@@ -45,3 +45,11 @@ filter.SharedTsibbleData <- function(.data, ..., .preserve = FALSE) {
   out <- dplyr::filter(as_tibble(.data), ..., .preserve = .preserve)
   reconstruct_shared_tsibble(out, .data)
 }
+
+transmute.SharedTsibbleData <- function(.data, ...) {
+  abort("Not supported for `as_shared_tsibble()`.")
+}
+
+select.SharedTsibbleData <- transmute.SharedTsibbleData
+
+rename.SharedTsibbleData <- transmute.SharedTsibbleData

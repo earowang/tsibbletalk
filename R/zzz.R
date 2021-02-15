@@ -7,5 +7,8 @@
 
   s3_register("dplyr::mutate", "SharedTsibbleData")
   s3_register("dplyr::filter", "SharedTsibbleData")
+  s3_register("dplyr::transmute", "SharedTsibbleData")
+  s3_register("dplyr::select", "SharedTsibbleData")
+  s3_register("dplyr::rename", "SharedTsibbleData")
 }
 # nocov end

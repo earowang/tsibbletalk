@@ -11,6 +11,14 @@ A shared tsibble data easily communicates between
     shiny module is provided to visually explore periodic/aperiodic
     temporal patterns.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/earowang/tsibbletalk}
+  \item Report bugs at \url{https://github.com/earowang/tsibbletalk/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Earo Wang \email{earo.wang@gmail.com} (\href{https://orcid.org/0000-0001-6448-5260}{ORCID})
 

@@ -16,6 +16,8 @@ Description: A shared tsibble data easily communicates between
     shiny module is provided to visually explore periodic/aperiodic
     temporal patterns.
 License: GPL-3
+URL: https://github.com/earowang/tsibbletalk
+BugReports: https://github.com/earowang/tsibbletalk/issues
 Depends: 
     R (>= 2.10)
 Imports: 

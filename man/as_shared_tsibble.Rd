@@ -13,8 +13,15 @@ as_shared_tsibble(x, spec)
 structures (i.e \code{key1 * key2}) are assumed for the key. The required
 specification for nesting is \code{parent / child}.}
 }
+\value{
+\code{SharedTsibbleData} subclassing of \code{SharedData} from {crosstalk}
+}
 \description{
 Coerce to a shared tsibble from tsibble
+}
+\details{
+The object returned from \code{as_shared_tsibble()} can be piped into all {plotly}
+functions to be visualised.
 }
 \examples{
 library(tsibble)

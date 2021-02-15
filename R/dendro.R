@@ -106,6 +106,9 @@ get_xy <- function(node) {
 #'   plotly_key_tree(shared_tourism)
 #' }
 plotly_key_tree <- function(data, height = NULL, width = NULL, ...) {
+  if (!is_shared_tsibble_data(data)) {
+    abort("`data` must be a shared tsibble data, created with `as_shared_tsibble()`.")
+  }
   template <- data
   data <- as_tsibble(data)
   key <- key_vars(data)

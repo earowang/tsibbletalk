@@ -42,6 +42,11 @@ SharedTsibbleData <- R6::R6Class(
 #' structures (i.e `key1 * key2`) are assumed for the key. The required
 #' specification for nesting is `parent / child`.
 #'
+#' @details
+#' The object returned from `as_shared_tsibble()` can be piped into all {plotly}
+#' functions to be visualised.
+#'
+#' @return `SharedTsibbleData` subclassing of `SharedData` from {crosstalk}
 #' @examples
 #' library(tsibble)
 #' as_shared_tsibble(tourism, spec = (State / Region) * Purpose)
@@ -50,6 +55,9 @@ SharedTsibbleData <- R6::R6Class(
 #' @importFrom utils head tail
 #' @export
 as_shared_tsibble <- function(x, spec) {
+  if (!tsibble::is_tsibble(x)) {
+    abort("`x` must be a tsibble object.")
+  }
   spec <- enquo(spec)
   keys <- key_vars(x)
   if (quo_is_missing(spec)) {
@@ -95,4 +103,8 @@ parse_key_val <- function(data, nesting, crossing) {
   } else {
     paste_data(data[c(nesting, crossing)])
   }
+}
+
+is_shared_tsibble_data <- function(x) {
+  inherits(x, "SharedTsibbleData")
 }

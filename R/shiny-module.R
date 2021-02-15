@@ -50,9 +50,11 @@ tsibbleWrapServer <- function(id, plot, period) {
       if (is_ggplot(plot)) {
         data <- plot$data
         plot <- ggplotly(plot)
-      } else {
+      } else if (inherits(plot, "plotly")) {
         data <- plotly_data(plot)
         plot <- plotly_build(plot)
+      } else {
+        abort("`plot` must be a ggplot or plotly object.")
       }
       idx <- data[[tsibble::index_var(data)]]
       period <- parse_period(idx, period)
@@ -64,8 +66,8 @@ tsibbleWrapServer <- function(id, plot, period) {
           pre = period$label, animate = TRUE, width = "100%"
         )
       })
+      output$plot <- renderPlotly(plot)
       observeEvent(input$unit, {
-        if (input$unit == period$max) return(output$plot <- renderPlotly(plot))
         new_data <- dice_tsibble(data, period$to, input$unit, period$scale)
         plotlyReact("plot", new_data, plot, clear = input$unit == 0)
       })
