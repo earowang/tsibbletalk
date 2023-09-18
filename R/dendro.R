@@ -53,7 +53,7 @@ plot_dendro2 <- function(d, data, cols, set, height = NULL, width = NULL, ...) {
   lab_lst <- vec_c(root_lab, lab_lst,
     vec_split(key_vals, data[tail(cols, 1)])$val)
   all_xy <- get_xy(d)
-  all_xy <- vec_slice(all_xy, vec_order(all_xy$y, direction = "desc"))
+  all_xy <- vec_slice(all_xy, i=vec_order(all_xy$y, direction = "desc"))
   all_xy$label <- c("", labs)
   all_xy$key <- lab_lst
 
